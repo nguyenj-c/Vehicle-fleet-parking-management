@@ -22,16 +22,15 @@ class FeatureContext implements Context
 
     private $fleet;
     private $otherFleet;
-    private $location;
     private $vehicle;
-    private $errorException;
+    private $location;
 
     public function __construct()
     {
         $this->fleet = new Fleet();
         $this->otherFleet = new Fleet();
         $this->vehicle = new Vehicle();
-        $this->errorException = new DomainException();
+        $this->location = new Location();
     }
     
 
@@ -52,17 +51,10 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Then this vehicle should be part of my vehicle fleet
-     */
-    public function thisVehicleShouldBePartOfMyVehicleFleet()
-    {
-
-    }
-
-    /**
      * @Given I have registered this vehicle into my fleet
      * @When I register this vehicle into my fleet
      * @When I try to register this vehicle into my fleet
+     * @Then I should be informed this this vehicle has already been registered into my fleet
      */
     public function iHaveRegisteredThisVehicleIntoMyFleet()
     {   
@@ -78,23 +70,15 @@ class FeatureContext implements Context
         );  
     }
 
-
     /**
-     * @Then I should be informed this this vehicle has already been registered into my fleet
+     * @Then this vehicle should be part of my vehicle fleet
      */
-    public function iShouldBeInformedThisThisVehicleHasAlreadyBeenRegisteredIntoMyFleet()
+    public function thisVehicleShouldBePartOfMyVehicleFleet()
     {
-        try{
-            $this->fleet->register($this->vehicle);  
-        }catch(DomainException $e)
-        {
-            $message = $e->getMessage();
-        }
-        Assert::assertEquals(
-            'This vehicle has already been registered into your fleet',
-            $message
-        );  
+        // TODO
+        throw new PendingException();
     }
+
 
     /**
      * @Given the fleet of another user
@@ -111,7 +95,7 @@ class FeatureContext implements Context
     {
         try{
             $this->otherFleet->register($this->vehicle);  
-        }catch(Exception $e)
+        }catch(DomainException $e)
         {
             $message = $e->getMessage();
         }  
@@ -119,5 +103,46 @@ class FeatureContext implements Context
             'This vehicle has already been registered into your fleet',
             $message
         ); 
+    }
+
+    /**
+     * @Given a location
+     */
+    public function aLocation()
+    {
+        $this->location;
+    }
+
+    /**
+     * @When I park my vehicle at this location
+     * @Given my vehicle has been parked into this location
+     * @When I try to park my vehicle at this location
+     */
+    public function iParkMyVehicleAtThisLocation()
+    {
+        $this->vehicle->parkVehicleAtLocation();
+    }
+
+    /**
+     * @Then the known location of my vehicle should verify this location
+     */
+    public function theKnownLocationOfMyVehicleShouldVerifyThisLocation()
+    {
+        $this->vehicle->verifyLocation();
+    }
+
+    /**
+     */
+    public function myVehicleHasBeenParkedIntoThisLocation()
+    {
+        throw new PendingException();
+    }
+
+    /**
+     * @Then I should be informed that my vehicle is already parked at this location
+     */
+    public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation()
+    {
+        throw new PendingException();
     }
 }
