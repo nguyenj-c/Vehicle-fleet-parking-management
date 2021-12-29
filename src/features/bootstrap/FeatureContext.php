@@ -6,6 +6,7 @@ use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
 use PHPUnit\Framework\Assert;
 
+
 /**
  * Defines application features from the specific context.
  */
@@ -23,12 +24,14 @@ class FeatureContext implements Context
     private $otherFleet;
     private $location;
     private $vehicle;
+    private $errorException;
 
     public function __construct()
     {
         $this->fleet = new Fleet();
         $this->otherFleet = new Fleet();
         $this->vehicle = new Vehicle();
+        $this->errorException = new DomainException();
     }
     
 
@@ -53,7 +56,7 @@ class FeatureContext implements Context
      */
     public function thisVehicleShouldBePartOfMyVehicleFleet()
     {
-        $this->fleet->hasThisVehicule();
+
     }
 
     /**
@@ -62,10 +65,16 @@ class FeatureContext implements Context
      * @When I try to register this vehicle into my fleet
      */
     public function iHaveRegisteredThisVehicleIntoMyFleet()
-    {      
-        Assert::assertSame(
-            'This vehicle has been registered into your fleet',
-            $this->vehicle->registerInFleet()
+    {   
+        try{
+            $this->fleet->register($this->vehicle);  
+        }catch(DomainException $e)
+        {
+            $message = $e->getMessage();
+        }  
+        Assert::assertEquals(
+            'This vehicle has already been registered into your fleet',
+            $message
         );  
     }
 
@@ -75,10 +84,16 @@ class FeatureContext implements Context
      */
     public function iShouldBeInformedThisThisVehicleHasAlreadyBeenRegisteredIntoMyFleet()
     {
-        Assert::assertSame(
+        try{
+            $this->fleet->register($this->vehicle);  
+        }catch(DomainException $e)
+        {
+            $message = $e->getMessage();
+        }
+        Assert::assertEquals(
             'This vehicle has already been registered into your fleet',
-            $this->vehicle->vehicleAlreadyRegistered()   
-        );   
+            $message
+        );  
     }
 
     /**
@@ -94,9 +109,15 @@ class FeatureContext implements Context
      */
     public function thisVehicleHasBeenRegisteredIntoTheOtherUsersFleet()
     {
-        Assert::assertSame(
-            'This vehicle has been registered into your fleet',
-            $this->vehicle->registerInFleet()
-        );  
+        try{
+            $this->otherFleet->register($this->vehicle);  
+        }catch(Exception $e)
+        {
+            $message = $e->getMessage();
+        }  
+        Assert::assertEquals(
+            'This vehicle has already been registered into your fleet',
+            $message
+        ); 
     }
 }
