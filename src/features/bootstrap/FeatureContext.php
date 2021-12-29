@@ -4,8 +4,7 @@ use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Behat\Context\Context;
 use Behat\Gherkin\Node\PyStringNode;
 use Behat\Gherkin\Node\TableNode;
-
-require __DIR__ . '/../../vendor/autoload.php';
+use PHPUnit\Framework\Assert;
 
 /**
  * Defines application features from the specific context.
@@ -21,26 +20,24 @@ class FeatureContext implements Context
      */
 
     private $fleet;
-    private $vehicule;
-    private $user;
+    private $otherFleet;
     private $location;
+    private $vehicle;
 
     public function __construct()
     {
-        $this->vehicule = new Vehicule();
-        $this->location = new Location();
-        $this->user = new User();
-        $this->fleet = new Fleet($this->vehicule);
+        $this->fleet = new Fleet();
+        $this->otherFleet = new Fleet();
+        $this->vehicle = new Vehicle();
     }
     
-
 
     /**
      * @Given my fleet
      */
     public function myFleet()
     {
-        $this->fleet->getTotalVehicule();
+        $this->fleet;
     }
 
     /**
@@ -48,116 +45,58 @@ class FeatureContext implements Context
      */
     public function aVehicle()
     {
-        $this->vehicule->getVehicule();
-    }
-
-    /**
-     * @Given I have registered this vehicle into my fleet
-     */
-    public function iHaveRegisteredThisVehicleIntoMyFleet($vehicule)
-    {
-        $this->user->registerVehiculeInFleet($vehicule);
-    }
-
-    /**
-     * @Given a location
-     */
-    public function aLocation()
-    {
-        $this->location->getLocation();
-    }
-
-    /**
-     * @When I park my vehicle at this location
-     */
-    public function iParkMyVehicleAtThisLocation($vehicule)
-    {
-        $this->location->parkVehicule($vehicule);
-    }
-
-    /**
-     * @Then the known location of my vehicle should verify this location
-     */
-    public function theKnownLocationOfMyVehicleShouldVerifyThisLocation($vehicule)
-    {
-        PHPUnit_Framework_Assert::assertSame(
-            $vehicule->getLocation(),
-            $this->location
-        );
-    }
-
-    /**
-     * @Given my vehicle has been parked into this location
-     */
-    public function myVehicleHasBeenParkedIntoThisLocation($vehicule)
-    {
-        $this->location->parkVehicule($vehicule);
-    }
-
-    /**
-     * @When I try to park my vehicle at this location
-     */
-    public function iTryToParkMyVehicleAtThisLocation($vehicule)
-    {
-        $this->location->parkVehicule($vehicule);
-    }
-
-    /**
-     * @Then I should be informed that my vehicle is already parked at this location
-     */
-    public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation($vehicule)
-    {
-        $this->location->vehiculeAlreadyParked($vehicule);
-    }
-
-    /**
-     * @When I register this vehicle into my fleet
-     */
-    public function iRegisterThisVehicleIntoMyFleet($vehicule)
-    {
-        $this->fleet->addVehicule($vehicule);
+        $this->vehicle;
     }
 
     /**
      * @Then this vehicle should be part of my vehicle fleet
      */
-    public function thisVehicleShouldBePartOfMyVehicleFleet($vehicule)
+    public function thisVehicleShouldBePartOfMyVehicleFleet()
     {
-        PHPUnit_Framework_Assert::assertSame(
-            $vehicule,
-            $this->fleet->getTotalVehicule()
-        );
+        $this->fleet->hasThisVehicule();
     }
 
     /**
+     * @Given I have registered this vehicle into my fleet
+     * @When I register this vehicle into my fleet
      * @When I try to register this vehicle into my fleet
      */
-    public function iTryToRegisterThisVehicleIntoMyFleet($vehicule)
-    {
-        $this->user->registerVehiculeInFleet($vehicule);
+    public function iHaveRegisteredThisVehicleIntoMyFleet()
+    {      
+        Assert::assertSame(
+            'This vehicle has been registered into your fleet',
+            $this->vehicle->registerInFleet()
+        );  
     }
+
 
     /**
      * @Then I should be informed this this vehicle has already been registered into my fleet
      */
-    public function iShouldBeInformedThisThisVehicleHasAlreadyBeenRegisteredIntoMyFleet($vehicule)
+    public function iShouldBeInformedThisThisVehicleHasAlreadyBeenRegisteredIntoMyFleet()
     {
-        $this->user->vehiculeAlreadyRegistered($vehicule);
+        Assert::assertSame(
+            'This vehicle has already been registered into your fleet',
+            $this->vehicle->vehicleAlreadyRegistered()   
+        );   
     }
 
     /**
      * @Given the fleet of another user
      */
-    public function theFleetOfAnotherUser($user,$vehicule)
+    public function theFleetOfAnotherUser()
     {
-        $user->registerVehiculeInFleet($vehicule);
+        $this->otherFleet;   
     }
 
     /**
      * @Given this vehicle has been registered into the other user's fleet
      */
-    public function thisVehicleHasBeenRegisteredIntoTheOtherUsersFleet($user,$vehicule)
+    public function thisVehicleHasBeenRegisteredIntoTheOtherUsersFleet()
     {
-        $user->registerVehiculeInFleet($vehicule);
+        Assert::assertSame(
+            'This vehicle has been registered into your fleet',
+            $this->vehicle->registerInFleet()
+        );  
     }
 }
