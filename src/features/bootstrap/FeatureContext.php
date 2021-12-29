@@ -27,9 +27,9 @@ class FeatureContext implements Context
 
     public function __construct()
     {
-        $this->fleet = new Fleet();
-        $this->otherFleet = new Fleet();
-        $this->vehicle = new Vehicle();
+        $this->fleet = new Fleet('1');
+        $this->otherFleet = new Fleet('2');
+        $this->vehicle = new Vehicle('1');
         $this->location = new Location();
     }
     
@@ -51,8 +51,15 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given I have registered this vehicle into my fleet
      * @When I register this vehicle into my fleet
+     */
+    public function ieRegisterThisVehicleIntoMyFleet()
+    {   
+        $this->fleet->register($this->vehicle); 
+    }
+
+    /**
+     * @Given I have registered this vehicle into my fleet
      * @When I try to register this vehicle into my fleet
      * @Then I should be informed this this vehicle has already been registered into my fleet
      */
@@ -63,11 +70,11 @@ class FeatureContext implements Context
         }catch(DomainException $e)
         {
             $message = $e->getMessage();
-        }  
-        Assert::assertEquals(
-            'This vehicle has already been registered into your fleet',
-            $message
-        );  
+            Assert::assertEquals(
+                'This vehicle has already been registered into your fleet',
+                $message
+            );
+        }    
     }
 
     /**
@@ -76,7 +83,10 @@ class FeatureContext implements Context
     public function thisVehicleShouldBePartOfMyVehicleFleet()
     {
         // TODO
-        throw new PendingException();
+        Assert::assertContains(
+            $this->vehicle->getNumPlaque(),
+            $this->fleet->getVehicles()
+        );
     }
 
 
@@ -98,11 +108,11 @@ class FeatureContext implements Context
         }catch(DomainException $e)
         {
             $message = $e->getMessage();
+            Assert::assertEquals(
+                'This vehicle has already been registered into your fleet',
+                $message
+            ); 
         }  
-        Assert::assertEquals(
-            'This vehicle has already been registered into your fleet',
-            $message
-        ); 
     }
 
     /**

@@ -8,5 +8,7 @@ class DomainException extends Exception
 
     }
 
+    function format($property) {
 
+    }
 }
