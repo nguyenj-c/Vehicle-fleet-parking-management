@@ -132,14 +132,7 @@ class FeatureContext implements Context
      */
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation()
     {
-        $this->vehicle->verifyLocation();
-    }
-
-    /**
-     */
-    public function myVehicleHasBeenParkedIntoThisLocation()
-    {
-        throw new PendingException();
+        Assert::assertTrue($this->vehicle->verifyLocation());
     }
 
     /**
@@ -147,6 +140,6 @@ class FeatureContext implements Context
      */
     public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation()
     {
-        throw new PendingException();
+        Assert::assertTrue($this->location->isParked($this->vehicle));
     }
 }
