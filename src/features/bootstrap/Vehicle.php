@@ -1,7 +1,6 @@
 <?php
 final class Vehicle
 {
-    private $fleet;
     private $location;
     private $numPlaque;
 
@@ -9,12 +8,7 @@ final class Vehicle
     {
         $this->numPlaque = $numPlaque;
     }
-
-    public function getFleet() : Fleet
-    {
-        return $this->fleet;
-    }
-
+    
     public function getNumPlaque() : string
     {
         return $this->numPlaque;

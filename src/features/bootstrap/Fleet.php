@@ -14,17 +14,20 @@ final class Fleet
 
     public function register(Vehicle $vehicle) : void
     {
-        if(in_array($vehicle->getNumPlaque(),$this->vehicles) == true){
+        if(in_array($vehicle,$this->vehicles) == true){
             throw new DomainException('This vehicle has already been registered into your fleet');
         }
-        $this->vehicle = $vehicle->getNumPlaque();
+        $this->vehicle = $vehicle;
 
         array_push($this->vehicles,$this->vehicle);
     }
 
-    public function getVehicles() : array
-    {
-        return $this->vehicles;
+    public function hasVehicle(Vehicle $vehicle) : bool
+    { 
+        if(in_array($vehicle,$this->vehicles) == true){
+            return true;
+        }
+        return false;
     }
 
 }
