@@ -14,7 +14,7 @@ final class Fleet
 
     public function register(Vehicle $vehicle) : void
     {
-        if(in_array($vehicle,$this->vehicles) == true){
+        if($this->hasVehicle($vehicle) == true){
             throw new DomainException('This vehicle has already been registered into your fleet');
         }
         $this->vehicle = $vehicle;
