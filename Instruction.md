@@ -8,14 +8,14 @@ Pour télécharger Behat
 
 ```composer install```
 
-Pour télécharger le dossier vendor avec PHPUnit et 
+Pour télécharger le dossier vendor avec PHPUnit
 
 
 # Test
 
 Pour voir les tests effectués pour ce projet.
 
-Faites cette commande sur un terminal à la racine du projet ( normalement là ou se trouve le Readme.md et Instruction.md )
+Faites cette commande sur un terminal à la source src du projet
 
 ```vendor/bin/behat```
 
