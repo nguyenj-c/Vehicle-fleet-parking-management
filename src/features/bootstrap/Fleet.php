@@ -2,9 +2,9 @@
 
 final class Fleet
 {
-    private $vehicles;
-    private $vehicle;
-    private $idFleet;
+    private array $vehicles;
+    private Vehicle $vehicle;
+    private int $idFleet;
 
     public function __construct($idFleet)
     {

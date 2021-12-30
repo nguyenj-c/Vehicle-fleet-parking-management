@@ -1,14 +1,15 @@
 <?php
 final class Location
 {
-    private $vehicule;
-    private $lattitude;
-    private $longitude;
+    private $vehicle = null;
+    private int $lattitude;
+    private int $longitude;
     
-    /*
-    public function __construct()
+    
+    public function __construct($lattitude, $longitude)
     {
-
+        $this->lattitude = $lattitude;
+        $this->longitude = $longitude;
     }
 
     function registerPark()
@@ -19,5 +20,14 @@ final class Location
     function removePark()
     {
 
-    } */
+    } 
+
+    public function isParked(Vehicle $vehicle) : bool
+    { 
+        if(in_array($vehicle,$this->vehicles) == true){
+            return true;
+        }
+        return false;
+    }
+
 }

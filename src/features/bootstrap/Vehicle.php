@@ -1,8 +1,8 @@
 <?php
 final class Vehicle
 {
-    private $location;
-    private $numPlaque;
+    private Location $location;
+    private string $numPlaque;
 
     public function __construct($numPlaque)
     {
