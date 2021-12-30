@@ -1,24 +1,18 @@
 <?php
 final class Vehicle
 {
-    private Location $location;
-    private string $numPlaque;
+    private ?Location $location = null;
 
-    public function __construct(string $numPlaque)
+    public function __construct(private string $plateNumber)
     {
-        $this->numPlaque = $numPlaque;
     }
 
-    
-    public function verifyLocation(Location $location) : bool
+    public function isParkedAt(Location $location): bool
     {
-        if($this->location == $location){
-            return true;
-        }
-        return false;
+        return $this->location == $location;
     }
 
-    public function parkVehicleAtLocation(Location $location)
+    public function parkAt(Location $location): void
     {
         $this->location = $location;
     }

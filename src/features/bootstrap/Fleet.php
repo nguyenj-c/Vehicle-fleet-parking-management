@@ -2,32 +2,24 @@
 
 final class Fleet
 {
-    private array $vehicles;
-    private Vehicle $vehicle;
-    private int $idFleet;
+    private array $vehicles = [];
 
-    public function __construct(int $idFleet)
+    public function __construct(private int $id)
     {
-        $this->idFleet = $idFleet;
-        $this->vehicles = [];
     }
 
-    public function register(Vehicle $vehicle) : void
+    public function register(Vehicle $vehicle): void
     {
-        if($this->hasVehicle($vehicle) == true){
+        if (true === $this->has($vehicle)) {
             throw new DomainException('This vehicle has already been registered into your fleet');
         }
-        $this->vehicle = $vehicle;
 
-        array_push($this->vehicles,$this->vehicle);
+        $this->vehicles[] = $vehicle;
     }
 
-    public function hasVehicle(Vehicle $vehicle) : bool
-    { 
-        if(in_array($vehicle,$this->vehicles) == true){
-            return true;
-        }
-        return false;
+    public function has(Vehicle $vehicle): bool
+    {
+        return in_array($vehicle, $this->vehicles, true);
     }
 
 }

@@ -1,35 +1,30 @@
 <?php
 final class Location
 {
-    private $vehicle = null;
-    private int $lattitude;
-    private int $longitude;
-    
-    
-    public function __construct(int $lattitude, int $longitude)
+    private ?Vehicle $vehicle = null;
+
+    public function __construct(private int $latitude, private int $longitude)
     {
-        $this->lattitude = $lattitude;
-        $this->longitude = $longitude;
     }
 
-    function registerPark(Vehicle $vehicle) : void
+    function registerPark(Vehicle $vehicle): void
     {
-        if ($this->vehicle == null) {
+        if (null === $this->vehicle) {
             $this->vehicle = $vehicle;
         }
     }
 
-    function removePark()
+    function removePark(): void
     {
         $this->vehicle = null;
-    }    
+    }
 
-    public function isParked(Vehicle $vehicle) : string
-    { 
-        if ($this->vehicle == $vehicle) {
+    public function isParked(Vehicle $vehicle): string
+    {
+        if ($vehicle === $this->vehicle) {
             return new DomainException('My vehicle is already parked here');
         }
-        if (!$this->vehicle == null) {
+        if (null !== $this->vehicle) {
             return new DomainException('Another vehicle is already parked here');
         }
     }
