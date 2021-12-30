@@ -8,11 +8,7 @@ final class Vehicle
     {
         $this->numPlaque = $numPlaque;
     }
-    
-    public function getNumPlaque() : string
-    {
-        return $this->numPlaque;
-    }
+
     /*
     public function verifyLocation()
     {
