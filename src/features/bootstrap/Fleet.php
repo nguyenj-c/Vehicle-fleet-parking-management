@@ -6,7 +6,7 @@ final class Fleet
     private Vehicle $vehicle;
     private int $idFleet;
 
-    public function __construct($idFleet)
+    public function __construct(int $idFleet)
     {
         $this->idFleet = $idFleet;
         $this->vehicles = [];

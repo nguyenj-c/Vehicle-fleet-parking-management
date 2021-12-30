@@ -28,10 +28,10 @@ class FeatureContext implements Context
 
     public function __construct()
     {
-        $this->fleet = new Fleet('1');
-        $this->otherFleet = new Fleet('2');
+        $this->fleet = new Fleet(1);
+        $this->otherFleet = new Fleet(2);
         $this->vehicle = new Vehicle('1');
-        $this->location = new Location();
+        $this->location = new Location(14,12);
 
     }
     
@@ -124,7 +124,8 @@ class FeatureContext implements Context
      */
     public function iParkMyVehicleAtThisLocation()
     {
-        $this->vehicle->parkVehicleAtLocation();
+        $this->location->registerPark($this->vehicle);
+        $this->vehicle->parkVehicleAtLocation($this->location);
     }
 
     /**
@@ -132,7 +133,7 @@ class FeatureContext implements Context
      */
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation()
     {
-        Assert::assertTrue($this->vehicle->verifyLocation());
+        Assert::assertTrue($this->vehicle->verifyLocation($this->location));
     }
 
     /**
@@ -140,6 +141,20 @@ class FeatureContext implements Context
      */
     public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation()
     {
-        Assert::assertTrue($this->location->isParked($this->vehicle));
+        try{
+            $this->location->isParked($this->vehicle);
+        }
+        catch(DomainException $e)
+        {
+            Assert::assertSame(
+                'My vehicle is already parked here',
+                $e->getMessage()
+            );
+        } finally {
+            Assert::assertEquals(
+                null,
+                $this->latestException
+            );
+        }
     }
 }
