@@ -18,4 +18,3 @@ Pour voir les tests effectués pour ce projet.
 Faites cette commande sur un terminal à la source src du projet
 
 ```vendor/bin/behat```
-
