@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 use Behat\Behat\Context\Context;
 use PHPUnit\Framework\Assert;
@@ -7,7 +7,12 @@ use App\Domain\Fleet;
 use App\Domain\Vehicle;
 use App\Domain\Location;
 use App\Domain\DuplicateVehicle;
-use App\Domain\DuplicatePark;
+use App\Domain\InvalidPark;
+use App\Infra\FleetRepository;
+use App\App\RegisterVehicle;
+use App\App\RegisterVehicleHandler;
+use App\App\ParkVehicle;
+use App\App\ParkVehicleHandler;
 /**
  * Defines application features from the specific context.
  */
@@ -18,13 +23,19 @@ class FeatureContext implements Context
     private Vehicle $vehicle;
     private Location $location;
     private ?Exception $latestException = null;
+    private ?FleetRepository $fleetRepository;
 
+    public function __construct(){
+        $this->fleetRepository = new FleetRepository();
+    }
+    
     /**
      * @Given my fleet
      */
     public function myFleet()
     {
         $this->fleet = new Fleet('AAAAA1');
+        $this->fleetRepository->save($this->fleet);
     }
 
     /**
@@ -42,11 +53,8 @@ class FeatureContext implements Context
      */
     public function ieRegisterThisVehicleIntoMyFleet()
     {
-        try {
-            $this->fleet->register($this->vehicle);
-        } catch (DuplicateVehicle $e) {
-            $this->latestException = $e;
-        }
+        $commanfHandler = new RegisterVehicleHandler($this->fleetRepository);
+        $commanfHandler(new RegisterVehicle($this->fleet->ID(), $this->vehicle->PlateNumber()));
     }
 
     /**
@@ -54,7 +62,12 @@ class FeatureContext implements Context
      */
     public function iHaveRegisteredThisVehicleIntoMyFleet()
     {
-        Assert::assertInstanceOf(DuplicateVehicle::class, $this->latestException);
+        try {
+            $commanfHandler = new RegisterVehicleHandler($this->fleetRepository);
+            $commanfHandler(new RegisterVehicle($this->fleet->ID(), $this->vehicle->PlateNumber()));
+        } catch (DuplicateVehicle $e) {
+            $this->latestException = $e;
+        }
     }
 
     /**
@@ -62,8 +75,9 @@ class FeatureContext implements Context
      */
     public function thisVehicleShouldBePartOfMyVehicleFleet()
     {
+        $fleetVerify = $this->fleetRepository->find($this->fleet->ID());
         Assert::assertNull($this->latestException);
-        Assert::assertTrue($this->fleet->has($this->vehicle));
+        Assert::assertTrue($fleetVerify->has($this->vehicle));
     }
 
 
@@ -73,6 +87,7 @@ class FeatureContext implements Context
     public function theFleetOfAnotherUser()
     {
         $this->otherFleet = new Fleet('AAAAA2');
+        $this->fleetRepository->save($this->otherFleet);
     }
 
     /**
@@ -80,7 +95,8 @@ class FeatureContext implements Context
      */
     public function thisVehicleHasBeenRegisteredIntoTheOtherUsersFleet()
     {
-        $this->otherFleet->register($this->vehicle);
+        $commanfHandler = new RegisterVehicleHandler($this->fleetRepository);
+        $commanfHandler(new RegisterVehicle($this->otherFleet->ID(), $this->vehicle->PlateNumber()));
     }
 
     /**
@@ -99,8 +115,9 @@ class FeatureContext implements Context
     public function iParkMyVehicleAtThisLocation()
     {
         try {
-            $this->fleet->park($this->vehicle, $this->location);
-        } catch (DuplicatePark $e) {
+            $commanfHandler = new ParkVehicleHandler($this->fleetRepository);
+            $commanfHandler(new ParkVehicle($this->fleet->ID(), $this->vehicle->PlateNumber(), $this->location));
+        } catch (InvalidPark $e) {
             $this->latestException = $e;
         }
     }
@@ -118,6 +135,7 @@ class FeatureContext implements Context
      */
     public function iShouldBeInformedThatMyVehicleIsAlreadyParkedAtThisLocation()
     {
-        Assert::assertInstanceOf(DuplicatePark::class, $this->latestException);
+        
+        Assert::assertInstanceOf(InvalidPark::class, $this->latestException);
     }
 }

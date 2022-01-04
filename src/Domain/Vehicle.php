@@ -8,7 +8,7 @@ final class Vehicle
 
     public function __construct(private string $plateNumber)
     {
-        if( strlen($plateNumber) !== 9){
+        if(!preg_match('/^[A-Z]{2}\-[0-9]{3}\-[A-Z]{2}$/', $plateNumber)){
             throw new IncorrectValueConstructor('This plate number don\'t respect the laws');
         }
     }
@@ -31,7 +31,12 @@ final class Vehicle
     private function guardAgainstDuplicatePark(Location $location)
     {
         if ($this->isParkedAt($location)) {
-            throw new DuplicatePark('My vehicle is already parked here');
+            throw InvalidPark::duplicate();
         } 
+    }
+    
+    public function PlateNumber()
+    {
+        return $this->plateNumber;
     }
 }

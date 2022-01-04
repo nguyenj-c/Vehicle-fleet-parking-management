@@ -43,15 +43,20 @@ final class Fleet
     private function guardAgainstUnknownVehicle(Vehicle $vehicle)
     {
         if (!$this->has($vehicle)) {
-            throw new UnknownVehicle('This vehicle isn\'t in your fleet');
+            throw UnknownVehicle::unknown();
         }     
     }
 
     private function guardAgainstDuplicateVehicle(Vehicle $vehicle)
     {
         if (true === $this->has($vehicle)) {
-            throw new DuplicateVehicle('This vehicle has already been registered into your fleet');
+            throw DuplicateVehicle::duplicate();
         }    
+    }
+
+    public function ID() : string
+    {
+        return $this->id;    
     }
 
 }
