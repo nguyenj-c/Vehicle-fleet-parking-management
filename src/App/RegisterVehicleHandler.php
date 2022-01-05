@@ -2,11 +2,8 @@
 
 namespace App\App;
 
-use App\Domain\UnknownVehicle;
 use App\Domain\Vehicle;
 use App\Infra\FleetRepository;
-
-use function PHPUnit\Framework\throwException;
 
 class RegisterVehicleHandler
 {    

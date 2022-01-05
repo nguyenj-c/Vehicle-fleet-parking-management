@@ -17,4 +17,9 @@ class FleetRepository
         $this->fleets[$fleet->ID()] = $fleet;
     }
 
+    public function has(string $ID) : bool
+    {
+        return array_key_exists($ID, $this->fleets);
+    }
+    
 } 

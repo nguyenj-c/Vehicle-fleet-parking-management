@@ -4,7 +4,6 @@ use Behat\Behat\Context\Context;
 use PHPUnit\Framework\Assert;
 
 use App\Domain\Fleet;
-use App\Domain\Vehicle;
 use App\Domain\Location;
 use App\Domain\DuplicateVehicle;
 use App\Domain\InvalidPark;
@@ -13,6 +12,9 @@ use App\App\RegisterVehicle;
 use App\App\RegisterVehicleHandler;
 use App\App\ParkVehicle;
 use App\App\ParkVehicleHandler;
+use App\App\CreateFleet;
+use App\App\CreateFleetHandler;
+
 /**
  * Defines application features from the specific context.
  */
@@ -34,8 +36,9 @@ class FeatureContext implements Context
      */
     public function myFleet()
     {
-        $this->fleet = new Fleet('AAAAA1');
-        $this->fleetRepository->save($this->fleet);
+        $commandHandler = new CreateFleetHandler($this->fleetRepository);
+        $command = new CreateFleet('AAAAA1');
+        $this->fleet = $commandHandler($command);
     }
 
     /**
@@ -86,8 +89,9 @@ class FeatureContext implements Context
      */
     public function theFleetOfAnotherUser()
     {
-        $this->otherFleet = new Fleet('AAAAA2');
-        $this->fleetRepository->save($this->otherFleet);
+        $commandHandler = new CreateFleetHandler($this->fleetRepository);
+        $command = new CreateFleet('AAAAA2');
+        $this->otherFleet = $commandHandler($command);
     }
 
     /**
