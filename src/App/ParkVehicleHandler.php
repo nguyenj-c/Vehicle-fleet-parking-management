@@ -14,6 +14,7 @@ class ParkVehicleHandler
 
     public function __invoke(ParkVehicle $parkVehicle) {
         $fleet = $this->fleetRepository->find($parkVehicle->getFleetID());
+
         
         $vehicle = new Vehicle($parkVehicle->getPlateNumber());
         $location = $parkVehicle->getLocation();

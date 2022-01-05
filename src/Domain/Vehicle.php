@@ -4,38 +4,29 @@ namespace App\Domain;
 
 final class Vehicle
 {
-    private ?Location $location = null;
-
-    public function __construct(private string $plateNumber)
+    public function __construct(private string $plateNumber, private ?Location $location = null)
     {
         if(!preg_match('/^[A-Z]{2}\-[0-9]{3}\-[A-Z]{2}$/', $plateNumber)){
             throw new IncorrectValueConstructor('This plate number don\'t respect the laws');
         }
     }
 
-    public function isParkedAt(Location $location) : bool
+    public function verify(Location $location) : bool
     {
         if($this->location === null){
             return false;
         }
-        return $location->equalsTo($this->location);
+
+        return $this->location->equalsTo($location);
     }
 
-    public function parkAt(Location $location) : Location
+    public function parkAt(Location $location) : Vehicle
     {
-        $this->guardAgainstDuplicatePark($location);
-
-        return $this->location = $location;
+        return new Vehicle($this->plateNumber(), $location);
     }
 
-    private function guardAgainstDuplicatePark(Location $location)
-    {
-        if ($this->isParkedAt($location)) {
-            throw InvalidPark::duplicate();
-        } 
-    }
     
-    public function PlateNumber()
+    public function plateNumber()
     {
         return $this->plateNumber;
     }

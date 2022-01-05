@@ -16,10 +16,20 @@ final class Location
 
     public function equalsTo(Location $location) : bool
     {
-        if(round($this->latitude, 2) != round($location->latitude, 2) && round($this->longitude, 2) != round($location->longitude, 2)){
+        if(round($this->latitude, 2) != round($location->latitude, 2) || round($this->longitude, 2) != round($location->longitude, 2)){
             return false;
         }
         return true;
+    }
+
+    public function latitude() : string
+    {
+        return $this->latitude;    
+    }
+
+    public function longitude() : string
+    {
+        return $this->longitude;    
     }
 
 }

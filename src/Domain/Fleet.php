@@ -15,41 +15,60 @@ final class Fleet
 
     public function register(Vehicle $vehicle) : void
     {
-        $this->guardAgainstDuplicateVehicle($vehicle);
+        $this->guardAgainstDuplicateVehicle($vehicle->plateNumber());
 
-        $this->vehicles[] = $vehicle;
-    }
-
-    public function has(Vehicle $vehicle) : bool
-    {
-        return in_array($vehicle, $this->vehicles, true);
-    }
-
-    public function park(Vehicle $vehicle, Location $location) : Location
-    {
-        $this->guardAgainstUnknownVehicle($vehicle);
-
-        return $vehicle->parkAt($location);
+        $this->vehicles[$vehicle->plateNumber()] = $vehicle;
     }
 
 
-    public function isParkedAt(Vehicle $vehicle, Location $location) : bool
+    public function park(Vehicle $vehicle, Location $location): void
     {
-        $this->guardAgainstUnknownVehicle($vehicle);
+        $this->guardAgainstUnknownVehicle($vehicle->plateNumber());
 
-        return $vehicle->isParkedAt($location);
+        $this->verifyLocation($vehicle->plateNumber(),$location);
+        $this->vehicles[$vehicle->plateNumber()] = $vehicle->parkAt($location);
     }
 
-    private function guardAgainstUnknownVehicle(Vehicle $vehicle)
+    public function isParkedAt(string $plateNumber, Location $location) : bool
     {
-        if (!$this->has($vehicle)) {
+        $vehicle = $this->find($plateNumber);
+        $this->guardAgainstUnknownVehicle($plateNumber);
+
+        return $this->verifyLocation($plateNumber,$location);
+    }
+
+    public function has(string $plateNumber) : bool
+    {
+        return array_key_exists($plateNumber, $this->vehicles);
+    }
+
+    private function find(string $plateNumber) : Vehicle
+    {
+        return $this->vehicles[$plateNumber];
+    }
+
+    private function verifyLocation(string $plateNumber, Location $location) : bool
+    {
+        $vehicle = $this->find($plateNumber);
+        $bool = $vehicle->verify($location);
+
+        if (!$bool) {
+            throw InvalidPark::duplicate();
+        } 
+
+        return $bool;
+    }
+
+    private function guardAgainstUnknownVehicle(string $plateNumber)
+    {
+        if (!$this->has($plateNumber)) {
             throw UnknownVehicle::unknown();
         }     
     }
 
-    private function guardAgainstDuplicateVehicle(Vehicle $vehicle)
+    private function guardAgainstDuplicateVehicle(string $plateNumber)
     {
-        if (true === $this->has($vehicle)) {
+        if (true === $this->has($plateNumber)) {
             throw DuplicateVehicle::duplicate();
         }    
     }
