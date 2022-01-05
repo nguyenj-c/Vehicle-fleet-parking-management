@@ -2,6 +2,7 @@
 
 namespace App\App;
 use App\Domain\Vehicle;
+use App\Domain\Location;
 use App\Infra\FleetRepository;
 
 class ParkVehicleHandler
@@ -17,7 +18,7 @@ class ParkVehicleHandler
 
         
         $vehicle = new Vehicle($parkVehicle->getPlateNumber());
-        $location = $parkVehicle->getLocation();
+        $location = new Location($parkVehicle->getLatitude(), $parkVehicle->getLongitude());
         $fleet->park($vehicle, $location);
 
         $this->fleetRepository->save($fleet);

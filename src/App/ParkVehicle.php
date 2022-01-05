@@ -5,7 +5,7 @@ use App\Domain\Location;
 
 class ParkVehicle
 {    
-    function __construct(private string $fleetID, private string $plateNumber, private Location $location) {
+    function __construct(private string $fleetID, private string $plateNumber, private float $latitude, private float $longitude) {
     }
     
     public function getFleetID(): string
@@ -18,9 +18,13 @@ class ParkVehicle
         return $this->plateNumber;
     }
 
-    public function getLocation(): Location
+    public function getLatitude(): float
     {
-        return $this->location;
+        return $this->latitude;
     }
-    
+   
+    public function getLongitude(): float
+    {
+        return $this->longitude;
+    }
 } 

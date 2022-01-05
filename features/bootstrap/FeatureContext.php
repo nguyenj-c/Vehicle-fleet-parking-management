@@ -121,7 +121,7 @@ class FeatureContext implements Context
     {
         try {
             $commandHandler = new ParkVehicleHandler($this->fleetRepository);
-            $command = new ParkVehicle($this->fleet->ID(), $this->plateNumber, $this->location);
+            $command = new ParkVehicle($this->fleet->ID(), $this->plateNumber, $this->location->latitude(), $this->location->longitude());
             $commandHandler($command);
         } catch (InvalidPark $e) {
             $this->latestException = $e;

@@ -18,3 +18,9 @@ Pour voir les tests effectués pour ce projet.
 Faites cette commande sur un terminal à la source src du projet
 
 ```vendor/bin/behat```
+
+# CLI 
+Etre dans src et faire 
+
+
+```php Application.php ./fleet 000001```
