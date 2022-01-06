@@ -1,7 +1,6 @@
 <?php
 
 namespace App\App;
-use App\Domain\Location;
 
 class ParkVehicle
 {    

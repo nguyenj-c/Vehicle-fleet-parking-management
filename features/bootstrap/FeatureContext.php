@@ -7,7 +7,7 @@ use App\Domain\Fleet;
 use App\Domain\Location;
 use App\Domain\DuplicateVehicle;
 use App\Domain\InvalidPark;
-use App\Infra\FleetRepository;
+use App\Infra\ArrayFleetRepository;
 use App\App\RegisterVehicle;
 use App\App\RegisterVehicleHandler;
 use App\App\ParkVehicle;
@@ -25,10 +25,10 @@ class FeatureContext implements Context
     private string $plateNumber;
     private Location $location;
     private ?Exception $latestException = null;
-    private ?FleetRepository $fleetRepository;
+    private ?ArrayFleetRepository $fleetRepository;
 
     public function __construct(){
-        $this->fleetRepository = new FleetRepository();
+        $this->fleetRepository = new ArrayFleetRepository();
     }
     
     /**

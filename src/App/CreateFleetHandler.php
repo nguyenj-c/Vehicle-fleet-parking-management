@@ -4,22 +4,20 @@ namespace App\App;
 
 use App\Domain\DuplicateFleet;
 use App\Domain\Fleet;
-use App\Infra\FleetRepository;
-
-use function PHPUnit\Framework\throwException;
+use App\Infra\ArrayFleetRepository;
 
 class CreateFleetHandler
 {    
-    private FleetRepository $fleetRepository;
+    private ArrayFleetRepository $fleetRepository;
 
-    public function __construct(FleetRepository $fleetRepository){
+    public function __construct(ArrayFleetRepository $fleetRepository){
             $this->fleetRepository = $fleetRepository;
     }
 
     public function __invoke(CreateFleet $createFleet) {
-        $existFleet = $this->fleetRepository->has($createFleet->getIdFleet());
-        
-        if($existFleet){
+        $existFleet = $this->fleetRepository->find($createFleet->getIdFleet());
+
+        if(null !== $existFleet){
             throw DuplicateFleet::duplicate();
         }
 

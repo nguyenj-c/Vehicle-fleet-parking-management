@@ -9,7 +9,7 @@ final class Fleet
     public function __construct(private string $id)
     {
         if(strlen($id) !== 6){
-            throw new IncorrectValueConstructor('This ID don\'t respect the standards');
+            throw IncorrectValueConstructor::fleet();
         }
     }
 
@@ -31,7 +31,7 @@ final class Fleet
 
     public function isParkedAt(string $plateNumber, Location $location) : bool
     {
-        $vehicle = $this->find($plateNumber);
+
         $this->guardAgainstUnknownVehicle($plateNumber);
 
         return $this->verifyLocation($plateNumber,$location);

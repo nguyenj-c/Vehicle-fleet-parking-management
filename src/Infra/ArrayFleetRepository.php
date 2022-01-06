@@ -2,14 +2,15 @@
 
 namespace App\Infra;
 use App\Domain\Fleet;
+use App\Domain\FleetRepository;
 
-class FleetRepository
+class ArrayFleetRepository implements FleetRepository
 {    
     private $fleets = [];
 
-    public function find(string $ID) : Fleet
+    public function find(string $ID) : ?Fleet
     {
-        return $this->fleets[$ID];
+        return $this->fleets[$ID] ?? null;
     }
 
     public function save(Fleet $fleet) : void
@@ -21,5 +22,4 @@ class FleetRepository
     {
         return array_key_exists($ID, $this->fleets);
     }
-    
 } 

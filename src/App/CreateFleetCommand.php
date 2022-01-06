@@ -9,12 +9,12 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use App\App\CreateFleet;
 use App\App\CreateFleetHandler;
-use App\Infra\FleetRepository;
+use App\Domain\FleetRepository;
 
 class CreateFleetCommand extends Command
 {
 
-    protected static $defaultName = './fleet';
+    protected static $defaultName = './fleet_create';
 
     public function __construct(private FleetRepository $fleetRepository){
         $this->fleetRepository = $fleetRepository;

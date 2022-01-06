@@ -3,25 +3,29 @@
 namespace App\App;
 use App\Domain\Vehicle;
 use App\Domain\Location;
-use App\Infra\FleetRepository;
+use App\Infra\ArrayFleetRepository;
+use App\Domain\UnknownFleet;
 
 class ParkVehicleHandler
 {    
-    private FleetRepository $fleetRepository;
+    private ArrayFleetRepository $fleetRepository;
 
-    public function __construct(FleetRepository $fleetRepository){
+    public function __construct(ArrayFleetRepository $fleetRepository){
             $this->fleetRepository = $fleetRepository;
     }
 
     public function __invoke(ParkVehicle $parkVehicle) {
-        $fleet = $this->fleetRepository->find($parkVehicle->getFleetID());
-
+        $existFleet = $this->fleetRepository->find($parkVehicle->getFleetID());
         
+        if(null === $existFleet){
+            throw UnknownFleet::unknown();
+        }
+
         $vehicle = new Vehicle($parkVehicle->getPlateNumber());
         $location = new Location($parkVehicle->getLatitude(), $parkVehicle->getLongitude());
-        $fleet->park($vehicle, $location);
+        $existFleet->park($vehicle, $location);
 
-        $this->fleetRepository->save($fleet);
+        $this->fleetRepository->save($existFleet);
     }
     
 } 

@@ -3,23 +3,27 @@
 namespace App\App;
 
 use App\Domain\Vehicle;
-use App\Infra\FleetRepository;
-
+use App\Infra\ArrayFleetRepository;
+use App\Domain\UnknownFleet;
 class RegisterVehicleHandler
 {    
-    private FleetRepository $fleetRepository;
+    private ArrayFleetRepository $fleetRepository;
 
-    public function __construct(FleetRepository $fleetRepository){
-            $this->fleetRepository = $fleetRepository;
+    public function __construct(ArrayFleetRepository $fleetRepository){
+        $this->fleetRepository = $fleetRepository;
     }
 
     public function __invoke(RegisterVehicle $registerVehicle) {
-        $fleet = $this->fleetRepository->find($registerVehicle->getFleetID());
+        $existFleet = $this->fleetRepository->find($registerVehicle->getFleetID());
+        
+        if(null === $existFleet){
+            throw UnknownFleet::unknown();
+        }
 
         $vehicle = new Vehicle($registerVehicle->getPlateNumber());
-        $fleet->register($vehicle);
+        $existFleet->register($vehicle);
 
-        $this->fleetRepository->save($fleet);
+        $this->fleetRepository->save($existFleet);
     }
     
 } 
