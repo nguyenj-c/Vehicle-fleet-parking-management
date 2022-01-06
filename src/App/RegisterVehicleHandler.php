@@ -3,13 +3,13 @@
 namespace App\App;
 
 use App\Domain\Vehicle;
-use App\Infra\ArrayFleetRepository;
+use App\Domain\FleetRepository;
 use App\Domain\UnknownFleet;
 class RegisterVehicleHandler
 {    
-    private ArrayFleetRepository $fleetRepository;
+    private FleetRepository $fleetRepository;
 
-    public function __construct(ArrayFleetRepository $fleetRepository){
+    public function __construct(FleetRepository $fleetRepository){
         $this->fleetRepository = $fleetRepository;
     }
 

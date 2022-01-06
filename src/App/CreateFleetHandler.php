@@ -4,13 +4,13 @@ namespace App\App;
 
 use App\Domain\DuplicateFleet;
 use App\Domain\Fleet;
-use App\Infra\ArrayFleetRepository;
+use App\Domain\FleetRepository;
 
 class CreateFleetHandler
 {    
-    private ArrayFleetRepository $fleetRepository;
+    private FleetRepository $fleetRepository;
 
-    public function __construct(ArrayFleetRepository $fleetRepository){
+    public function __construct(FleetRepository $fleetRepository){
             $this->fleetRepository = $fleetRepository;
     }
 

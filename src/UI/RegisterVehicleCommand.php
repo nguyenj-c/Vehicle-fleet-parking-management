@@ -8,16 +8,17 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 use App\App\RegisterVehicle;
+use App\App\RegisterVehicleBus;
 use App\App\RegisterVehicleHandler;
-use App\Infra\ArrayFleetRepository;
+
 
 class RegisterVehicleCommand extends Command
 {
 
     protected static $defaultName = './fleet_register-vehicle';
 
-    public function __construct(private ArrayFleetRepository $fleetRepository){
-        $this->fleetRepository = $fleetRepository;
+    public function __construct(RegisterVehicleBus $commandBus){
+        $this->commandBus = $commandBus;
 
         parent::__construct();
     }
@@ -39,10 +40,9 @@ class RegisterVehicleCommand extends Command
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: '.$input->getArgument('fleetId'));
         $output->writeln('Vehicle of the user: '.$input->getArgument('platNumber'));
-        $commandHandler = new RegisterVehicleHandler($this->fleetRepository);
         $command = new RegisterVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'));
-        $commandHandler($command);
-        var_dump($this->fleetRepository);
+        $this->commandBus->handle($command);
+
         return Command::SUCCESS;
     }
 }

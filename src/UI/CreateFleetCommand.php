@@ -8,16 +8,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 use App\App\CreateFleet;
-use App\App\CreateFleetHandler;
-use App\Domain\FleetRepository;
+use App\App\RegisterBus;
 
 class CreateFleetCommand extends Command
 {
 
     protected static $defaultName = './fleet_create';
 
-    public function __construct(private FleetRepository $fleetRepository){
-        $this->fleetRepository = $fleetRepository;
+    public function __construct(RegisterBus $commandBus){
+        $this->commandBus = $commandBus;
 
         parent::__construct();
     }
@@ -37,10 +36,9 @@ class CreateFleetCommand extends Command
     
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: '.$input->getArgument('username'));
-        $commandHandler = new CreateFleetHandler($this->fleetRepository);
         $command = new CreateFleet($input->getArgument('username'));
-        $commandHandler($command);
-        var_dump($this->fleetRepository);
+        $this->commandBus->handle($command);
+
         return Command::SUCCESS;
     }
 }

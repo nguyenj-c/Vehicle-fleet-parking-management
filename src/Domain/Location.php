@@ -18,11 +18,8 @@ final class Location
 
     public function equalsTo(Location $location) : bool
     {
-        return round(
-            $this->latitude === $location->latitude
-            && $this->longitude === $location->longitude
-        );
-
+        return $this->latitude === $location->latitude
+            && $this->longitude === $location->longitude;
     }
 
     public function latitude() : string
