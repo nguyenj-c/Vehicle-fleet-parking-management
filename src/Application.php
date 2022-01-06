@@ -15,9 +15,8 @@ $fleetRepository= new ArrayFleetRepository();
 // ... register commands
 
 $registerBus = new RegisterBus($fleetRepository);
-$registerVehicleBus = new RegisterVehicleBus($fleetRepository);
+
 
 $application->add(new CreateFleetCommand($registerBus));
-var_dump($fleetRepository);
-$application->add(new RegisterVehicleCommand($registerVehicleBus));
+$application->add(new RegisterVehicleCommand($registerBus));
 $application->run();

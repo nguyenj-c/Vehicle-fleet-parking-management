@@ -8,6 +8,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 use App\App\CreateFleet;
+use App\App\CreateFleetHandler;
 use App\App\RegisterBus;
 
 class CreateFleetCommand extends Command

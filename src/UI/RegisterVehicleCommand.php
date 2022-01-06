@@ -2,6 +2,7 @@
 
 namespace App\UI;
 
+use App\App\RegisterBus;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -17,7 +18,7 @@ class RegisterVehicleCommand extends Command
 
     protected static $defaultName = './fleet_register-vehicle';
 
-    public function __construct(RegisterVehicleBus $commandBus){
+    public function __construct(RegisterBus $commandBus){
         $this->commandBus = $commandBus;
 
         parent::__construct();
