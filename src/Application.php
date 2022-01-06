@@ -3,13 +3,13 @@
 // application.php
 require __DIR__ . '/../vendor/autoload.php';
 
-use App\App\CreateFleetCommand;
-use App\App\RegisterVehicleCommand;
-use App\Infra\FleetRepository;
+use App\UI\CreateFleetCommand;
+use App\UI\RegisterVehicleCommand;
+use App\Infra\ArrayFleetRepository;
 use Symfony\Component\Console\Application;
 
 $application = new Application();
-$fleetRepository= new FleetRepository();
+$fleetRepository= new ArrayFleetRepository();
 // ... register commands
 
 
