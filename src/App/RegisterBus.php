@@ -12,21 +12,14 @@ class RegisterBus implements CommandBus
     
     public function handle($command)
     {
-        if($command instanceof CreateFleet){
-            $commandHandler = new CreateFleetHandler($this->fleetRepository);
-            $commandHandler($command);
-        }
+        $commandHandler = match (TRUE) 
+        {
+            ($command instanceof CreateFleet) => new CreateFleetHandler($this->fleetRepository),
+            ($command instanceof RegisterVehicle) => new RegisterVehicleHandler($this->fleetRepository),
+            ($command instanceof ParkVehicle) => new ParkVehicleHandler($this->fleetRepository)
+        };    
+        $commandHandler($command);
 
-        if($command instanceof RegisterVehicle){
-            $commandHandler = new RegisterVehicleHandler($this->fleetRepository);
-            $commandHandler($command);
-        }
-
-        if($command instanceof ParkVehicle){
-            $commandHandler = new ParkVehicleHandler($this->fleetRepository);
-            $commandHandler($command);
-        }
-        
         if(!($command instanceof CreateFleet) &&  !($command instanceof RegisterVehicle) && !($command instanceof ParkVehicle)){
             throw InvalidCommand::unknown();
         }
