@@ -10,8 +10,7 @@ final class Location
     {
         $latitude = round($latitude, self::PRECISION);
         $longitude = round($longitude, self::PRECISION);
-        var_dump($longitude);
-        var_dump($latitude);
+
         if (-90 >= $latitude && 90 >= $latitude || -180 >= $latitude && 180 >= $longitude){
             throw IncorrectValueConstructor::location();
         }     
