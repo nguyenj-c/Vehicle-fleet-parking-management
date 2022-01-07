@@ -4,7 +4,9 @@
 require __DIR__ . '/../vendor/autoload.php';
 
 use App\App\RegisterBus;
-use App\App\RegisterVehicleBus;
+use App\App\CreateFleetHandler;
+use App\App\RegisterVehicleHandler;
+use App\App\ParkVehicleHandler;
 use App\UI\CreateFleetCommand;
 use App\UI\RegisterVehicleCommand;
 use App\Infra\ArrayFleetRepository;
@@ -14,7 +16,10 @@ $application = new Application();
 $fleetRepository= new ArrayFleetRepository();
 // ... register commands
 
-$registerBus = new RegisterBus($fleetRepository);
+$registerBus = new RegisterBus([ 
+                            CreateFleet::class => new CreateFleetHandler($fleetRepository), 
+                            RegisterVehicle::class => new RegisterVehicleHandler($fleetRepository), 
+                            ParkVehicle::class => new ParkVehicleHandler($fleetRepository)]);
 
 $application->add(new CreateFleetCommand($registerBus));
 $application->add(new RegisterVehicleCommand($registerBus));
