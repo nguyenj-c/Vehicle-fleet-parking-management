@@ -2,6 +2,7 @@
 
 namespace App\UI;
 
+use App\App\CommandBus;
 use App\App\RegisterBus;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
@@ -15,7 +16,7 @@ class CreateFleetCommand extends Command
 
     protected static $defaultName = './fleet_create';
 
-    public function __construct(RegisterBus $commandBus){
+    public function __construct(CommandBus $commandBus){
         $this->commandBus = $commandBus;
 
         parent::__construct();
@@ -37,7 +38,7 @@ class CreateFleetCommand extends Command
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: '.$input->getArgument('username'));
         $command = new CreateFleet($input->getArgument('username'));
-        $this->commandBus->handle($command);
+        $this->commandBus->handle($command, CreateFleet::class);
 
         return Command::SUCCESS;
     }

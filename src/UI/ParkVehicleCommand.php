@@ -10,10 +10,10 @@ use Symfony\Component\Console\Input\InputArgument;
 
 use App\App\RegisterVehicle;
 
-class RegisterVehicleCommand extends Command
+class ParkVehicleCommand extends Command
 {
 
-    protected static $defaultName = './fleet_register-vehicle';
+    protected static $defaultName = './fleet_localize-vehicle';
 
     public function __construct(CommandBus $commandBus){
         $this->commandBus = $commandBus;
@@ -23,14 +23,16 @@ class RegisterVehicleCommand extends Command
     protected function configure(): void
     {
         $this->addArgument('fleetId', InputArgument::REQUIRED, 'The plate number of the vehicle.');
-        $this->addArgument('platNumber', InputArgument::REQUIRED, 'The plate number of the vehicle.');
+        $this->addArgument('platNumber', InputArgument::REQUIRED, 'The plate number of the vehicle.');        
+        $this->addArgument('latitude', InputArgument::REQUIRED, 'The latitude of the location.');        
+        $this->addArgument('longitude', InputArgument::REQUIRED, 'The longitude of the location.');
     }
     
     // ...
     public function execute(InputInterface $input, OutputInterface $output): int
     {
         $output->writeln([
-            'Vehicle Creator',
+            'Vehicle park',
             '============',
             '',
         ]);
@@ -38,8 +40,10 @@ class RegisterVehicleCommand extends Command
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: '.$input->getArgument('fleetId'));
         $output->writeln('Vehicle of the user: '.$input->getArgument('platNumber'));
-        
-        $command = new RegisterVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'));
+        $output->writeln('The latitude of the location: '.$input->getArgument('latitude'));
+        $output->writeln('The longitude of the location: '.$input->getArgument('longitude'));
+
+        $command = new RegisterVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'),$input->getArgument('latitude'),$input->getArgument('longitude'));
         $this->commandBus->handle($command);
 
         return Command::SUCCESS;
