@@ -169,15 +169,25 @@ class FeatureContext implements Context
     }
 
     /**
-     * @When I run :arg1 command
+     * @Given a fleet create with a command
      */
-    public function iRunCommand($arg1)
+    public function aFleetCreateWithACommand()
     {
         $this->application->add(new CreateFleetCommand($this->registerBus));
         $command = $this->application->find('./fleet_create');
         $commandTester = new CommandTester($command);
-        $commandTester->execute(array('command' => $arg1, 'username' => '000001'));
-        $this->display = $commandTester->getDisplay();
+        $commandTester->execute(array('command' => $command, 'username' => '000001'));
+    }
+
+    /**
+     * @Given an another fleet create with a command
+     */
+    public function anAnotherFleetCreateWithACommand()
+    {
+        $this->application->add(new CreateFleetCommand($this->registerBus));
+        $command = $this->application->find('./fleet_create');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array('command' => $command, 'username' => '000002'));
     }
 
     /**
@@ -189,25 +199,46 @@ class FeatureContext implements Context
     }
 
     /**
-     * @When I try to run :arg1 command
+     * @When I try to register with :arg1 command
      */
-    public function iTryToRunCommand($arg1)
+    public function iTryToRegisterWithCommand($arg1)
     {
         $this->application->add(new RegisterVehicleCommand($this->registerBus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg1, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ'));
-        $this->display = $commandTester->getDisplay();
     }
 
 
     /**
      * @Then I should see my vehicle in my fleet
      */
-    public function iShouldSeeMyVehicleInMyFleet(PyStringNode $string)
+    public function iShouldSeeMyVehicleInMyFleet()
     {
         $fleetVerify = $this->fleetRepository->find('000001');
         Assert::assertNotNull($fleetVerify);
         Assert::assertNotNull($fleetVerify->find('AN-010-ZZ'));
     }
+
+    /**
+     * @When I try to register in another fleet with :arg1 command
+     */
+    public function iTryToRegisterInAnotherFleetWithCommand($arg1)
+    {
+        $this->application->add(new RegisterVehicleCommand($this->registerBus));
+        $command = $this->application->find('./fleet_register');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array('command' => $arg1, 'fleetId' => '000002', 'platNumber' => 'AN-010-ZZ'));
+    }
+
+    /**
+     * @Then I should see my vehicle in another fleet
+     */
+    public function iShouldSeeMyVehicleInAnotherFleet()
+    {
+        $fleetVerify = $this->fleetRepository->find('000002');
+        Assert::assertNotNull($fleetVerify);
+        Assert::assertNotNull($fleetVerify->find('AN-010-ZZ'));
+    }
+
 }

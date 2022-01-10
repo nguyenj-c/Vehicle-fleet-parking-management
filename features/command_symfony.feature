@@ -3,14 +3,17 @@ Feature: Test symfony command
   As a Behat developer
   I need to show simple scenario based on http://symfony.com/doc/2.0/components/console.html#testing-commands
 
+  Background:
+    Given a fleet create with a command
+    Given an another fleet create with a command
+
   Scenario: Running Create fleet command
-    When I run "./fleet_create" command
     Then I should see my fleet
-  Scenario: Running Register vehicle command
-    When I try to run "./fleet_register" command
+
+  Scenario: Running Register Vehicle command
+    When I try to register with "./fleet_register" command
     Then I should see my vehicle in my fleet
-    """ 
-    Fleet of the user: 000001
-    Vehicle of the user: AA-010-ZZ
-    """
-    
+
+  Scenario: Running Register Vehicle command
+    When I try to register in another fleet with "./fleet_register" command
+    Then I should see my vehicle in another fleet
