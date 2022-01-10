@@ -4,7 +4,7 @@ namespace App\App;
 
 use App\Domain\Vehicle;
 use App\Domain\FleetRepository;
-use App\Domain\UnknownFleet;
+use App\Domain\Exceptions\UnknownFleet;
 class RegisterVehicleHandler
 {    
     private FleetRepository $fleetRepository;

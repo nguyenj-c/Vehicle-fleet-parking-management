@@ -2,9 +2,9 @@
 
 namespace App\App;
 
-use App\Domain\DuplicateFleet;
 use App\Domain\Fleet;
 use App\Domain\FleetRepository;
+use App\Domain\Exceptions\DuplicateFleet;
 
 class CreateFleetHandler
 {    

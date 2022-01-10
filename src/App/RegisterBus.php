@@ -1,7 +1,7 @@
 <?php 
 
 namespace App\App;
-use App\Domain\InvalidCommand;
+use App\Domain\Exceptions\InvalidCommand;
 use App\Infra\ArrayFleetRepository;
 
 class RegisterBus implements CommandBus

@@ -1,6 +1,10 @@
 <?php 
 
 namespace App\Domain;
+use App\Domain\Exceptions\IncorrectValueConstructor;
+use App\Domain\Exceptions\InvalidPark;
+use App\Domain\Exceptions\DuplicateVehicle;
+use App\Domain\Exceptions\UnknownVehicle;
 
 final class Fleet
 {

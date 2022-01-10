@@ -1,6 +1,7 @@
 <?php 
 
 namespace App\Domain;
+use App\Domain\Exceptions\IncorrectValueConstructor;
 
 final class Vehicle
 {
