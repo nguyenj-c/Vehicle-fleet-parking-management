@@ -28,7 +28,8 @@ $map = ([
     RegisterVehicle::class => new RegisterVehicleHandler($fleetRepository), 
     ParkVehicle::class => new ParkVehicleHandler($fleetRepository),
 ]);
-$registerBus = new RegisterBus($fleetRepository,$map);
+
+$registerBus = new RegisterBus($map);
 
 $application->add(new CreateFleetCommand($registerBus));
 $application->add(new RegisterVehicleCommand($registerBus));

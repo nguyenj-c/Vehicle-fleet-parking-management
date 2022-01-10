@@ -29,12 +29,6 @@ class RegisterVehicleCommand extends Command
     // ...
     public function execute(InputInterface $input, OutputInterface $output): int
     {
-        $output->writeln([
-            'Vehicle Creator',
-            '============',
-            '',
-        ]);
-    
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: '.$input->getArgument('fleetId'));
         $output->writeln('Vehicle of the user: '.$input->getArgument('platNumber'));

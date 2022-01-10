@@ -46,9 +46,9 @@ final class Fleet
         return array_key_exists($plateNumber, $this->vehicles);
     }
 
-    private function find(string $plateNumber) : Vehicle
+    public function find(string $plateNumber) : ?Vehicle
     {
-        return $this->vehicles[$plateNumber];
+        return $this->vehicles[$plateNumber] ?? null;
     }
 
     private function verifyLocation(string $plateNumber, Location $location) : bool

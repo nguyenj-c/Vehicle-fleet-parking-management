@@ -6,9 +6,8 @@ use App\Infra\ArrayFleetRepository;
 
 class RegisterBus implements CommandBus
 {
-    public function __construct(private ArrayFleetRepository $fleetRepository, private array $arrayCommand)
+    public function __construct(private array $arrayCommand)
     {
-        $this->fleetRepository = $fleetRepository;
         $this->arrayCommand = $arrayCommand;
     }
     
