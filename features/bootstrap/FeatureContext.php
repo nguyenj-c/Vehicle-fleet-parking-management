@@ -180,7 +180,7 @@ class FeatureContext implements Context
     }
 
     /**
-     * @Given an another fleet create with a command
+     * @Given another fleet create with a command
      */
     public function anAnotherFleetCreateWithACommand()
     {
@@ -199,6 +199,14 @@ class FeatureContext implements Context
     }
 
     /**
+     * @Then I should see the second fleet
+     */
+    public function iShouldSeeTheSecondFleet()
+    {
+        Assert::assertNotNull($this->fleetRepository->find('000002'));
+    }
+
+    /**
      * @When I try to register with :arg1 command
      */
     public function iTryToRegisterWithCommand($arg1)
@@ -211,6 +219,7 @@ class FeatureContext implements Context
 
 
     /**
+     * @Given I have this vehicle into my fleet
      * @Then I should see my vehicle in my fleet
      */
     public function iShouldSeeMyVehicleInMyFleet()
@@ -241,4 +250,39 @@ class FeatureContext implements Context
         Assert::assertNotNull($fleetVerify->find('AN-010-ZZ'));
     }
 
+
+    /**
+     * @Given a vehicle in my fleet
+     */
+    public function aVehicleInMyFleet()
+    {
+        $this->application->add(new RegisterVehicleCommand($this->registerBus));
+        $command = $this->application->find('./fleet_register');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array('command' => $command, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ'));
+    }
+
+    /**
+     * @When I park my vehicle at this location :arg1 :arg2 with :arg3 command
+     */
+    public function iParkMyVehicleAtThisLocationWithCommand($arg1, $arg2, $arg3)
+    {
+        $this->application->add(new ParkVehicleCommand($this->registerBus));
+        $command = $this->application->find('./fleet_localize-vehicle');
+        $commandTester = new CommandTester($command);
+        $commandTester->execute(array('command' => $arg3, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ', 
+                                        'latitude' => $arg1,'longitude' => $arg2));
+    }
+
+    /**
+     * @Then my vehicle should verify this location :arg1 :arg2
+     */
+    public function myVehicleShouldVerifyThisLocation($arg1, $arg2)
+    {
+        $location = new Location($arg1, $arg2);
+        $fleetVerify = $this->fleetRepository->find('000001');
+        Assert::assertNotNull($fleetVerify);
+
+        Assert::assertTrue($fleetVerify->verifyLocation('AN-010-ZZ', $location));
+    }
 }

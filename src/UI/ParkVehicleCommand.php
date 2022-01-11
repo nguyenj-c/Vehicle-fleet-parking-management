@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
-use App\App\RegisterVehicle;
+use App\App\ParkVehicle;
 
 class ParkVehicleCommand extends Command
 {
@@ -43,7 +43,7 @@ class ParkVehicleCommand extends Command
         $output->writeln('The latitude of the location: '.$input->getArgument('latitude'));
         $output->writeln('The longitude of the location: '.$input->getArgument('longitude'));
 
-        $command = new RegisterVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'),$input->getArgument('latitude'),$input->getArgument('longitude'));
+        $command = new ParkVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'),$input->getArgument('latitude'),$input->getArgument('longitude'));
         $this->commandBus->handle($command);
 
         return Command::SUCCESS;

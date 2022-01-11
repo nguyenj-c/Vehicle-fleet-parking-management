@@ -24,7 +24,6 @@ final class Fleet
         $this->vehicles[$vehicle->plateNumber()] = $vehicle;
     }
 
-
     public function park(Vehicle $vehicle, Location $location): void
     {
         $this->guardAgainstUnknownVehicle($vehicle->plateNumber());
@@ -51,11 +50,11 @@ final class Fleet
         return $this->vehicles[$plateNumber] ?? null;
     }
 
-    private function verifyLocation(string $plateNumber, Location $location) : bool
+    public function verifyLocation(string $plateNumber, Location $location) : bool
     {
         $vehicle = $this->find($plateNumber);
         $bool = $vehicle->verify($location);
-
+        var_dump($this);
         if (!$bool) {
             throw InvalidPark::duplicate();
         } 
