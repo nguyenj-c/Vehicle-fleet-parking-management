@@ -157,7 +157,10 @@ class FeatureContext implements Context
      */
     public function theKnownLocationOfMyVehicleShouldVerifyThisLocation()
     {
-        Assert::assertInstanceOf(InvalidPark::class, $this->latestException);
+        $fleetVerify = $this->fleetRepository->find($this->fleet->ID());
+        $vehicleFind = $fleetVerify->find($this->plateNumber);
+        Assert::assertNotNull($vehicleFind);
+        Assert::assertTrue($vehicleFind->verify($this->location));
     }
 
     /**
@@ -281,8 +284,8 @@ class FeatureContext implements Context
     {
         $location = new Location($arg1, $arg2);
         $fleetVerify = $this->fleetRepository->find('000001');
-        Assert::assertNotNull($fleetVerify);
-
-        Assert::assertTrue($fleetVerify->verifyLocation('AN-010-ZZ', $location));
+        $vehicleFind = $fleetVerify->find('AN-010-ZZ');
+        Assert::assertNotNull($vehicleFind);
+        Assert::assertTrue($vehicleFind->verify($location));
     }
 }
