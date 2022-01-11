@@ -18,6 +18,7 @@ use App\App\ParkVehicle;
 use App\App\ParkVehicleHandler;
 use App\App\CreateFleet;
 use App\App\CreateFleetHandler;
+use App\App\Logger;
 
 use App\App\RegisterBus;
 use App\UI\CreateFleetCommand;
@@ -41,18 +42,20 @@ class FeatureContext implements Context
     private $application;
     private array $map;
     private RegisterBus $registerBus;
-    private string $display;
+    private Logger $logger;
+
 
     public function __construct(){
         $this->fleetRepository = new ArrayFleetRepository();
         $this->application = new Application();
+        $this->logger = new Logger();
         $this->map = ([ 
             CreateFleet::class => new CreateFleetHandler($this->fleetRepository), 
             RegisterVehicle::class => new RegisterVehicleHandler($this->fleetRepository), 
             ParkVehicle::class => new ParkVehicleHandler($this->fleetRepository),
         ]);
         
-        $this->registerBus = new RegisterBus($this->map);
+        $this->registerBus = new RegisterBus($this->map,$this->logger);
     }
     
     /**

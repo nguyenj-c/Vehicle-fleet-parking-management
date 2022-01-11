@@ -2,7 +2,7 @@
 
 namespace App\App;
 
-interface CommandBus
+interface CommandBusMiddleware
 {
     public function handle($command);
 }

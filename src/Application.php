@@ -8,6 +8,7 @@ use App\App\RegisterVehicle;
 use App\App\ParkVehicle;
 
 use App\App\RegisterBus;
+use App\App\Logger;
 use App\App\CreateFleetHandler;
 use App\App\RegisterVehicleHandler;
 use App\App\ParkVehicleHandler;
@@ -28,8 +29,8 @@ $map = ([
     RegisterVehicle::class => new RegisterVehicleHandler($fleetRepository), 
     ParkVehicle::class => new ParkVehicleHandler($fleetRepository),
 ]);
-
-$registerBus = new RegisterBus($map);
+$logger = new Logger();
+$registerBus = new RegisterBus($map, $logger);
 
 $application->add(new CreateFleetCommand($registerBus));
 $application->add(new RegisterVehicleCommand($registerBus));
