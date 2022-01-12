@@ -20,12 +20,6 @@ class LoggingMiddleware implements CommandBusMiddleware
 
         $reponse = $this->commandBus->handle($command);
 
-        $commandHandler = $this->arrayCommand[$command::class] ?? null;
-        if($commandHandler === null){
-            throw InvalidCommand::unknown();
-        }
-        $commandHandler($command);
-
         $endTime = microtime(true);
 
         $timeElapsed = $endTime - $startTime;
