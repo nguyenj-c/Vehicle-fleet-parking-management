@@ -61,14 +61,14 @@ final class Fleet
         return $bool;
     }
 
-    private function guardAgainstUnknownVehicle(string $plateNumber)
+    private function guardAgainstUnknownVehicle(string $plateNumber) : void
     {
         if (!$this->has($plateNumber)) {
             throw UnknownVehicle::unknown();
         }     
     }
 
-    private function guardAgainstDuplicateVehicle(string $plateNumber)
+    private function guardAgainstDuplicateVehicle(string $plateNumber) : void
     {
         if (true === $this->has($plateNumber)) {
             throw DuplicateVehicle::duplicate();

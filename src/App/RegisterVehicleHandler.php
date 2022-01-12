@@ -9,15 +9,11 @@ class RegisterVehicleHandler
 {    
 
     public function __construct(private FleetRepository $fleetRepository){
-        $this->fleetRepository = $fleetRepository;
     }
 
     public function __invoke(RegisterVehicle $registerVehicle) {
-        $existFleet = $this->fleetRepository->find($registerVehicle->getFleetID());
-        
-        if(null === $existFleet){
-            throw UnknownFleet::unknown();
-        }
+        $existFleet = $this->fleetRepository->find($registerVehicle->getFleetID())
+            ?? throw UnknownFleet::unknown();
 
         $vehicle = new Vehicle($registerVehicle->getPlateNumber());
         $existFleet->register($vehicle);

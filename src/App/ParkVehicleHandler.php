@@ -10,15 +10,11 @@ class ParkVehicleHandler
 {    
 
     public function __construct(private FleetRepository $fleetRepository){
-            $this->fleetRepository = $fleetRepository;
     }
 
     public function __invoke(ParkVehicle $parkVehicle) {
-        $existFleet = $this->fleetRepository->find($parkVehicle->getFleetID());
-        
-        if(null === $existFleet){
-            throw UnknownFleet::unknown();
-        }
+        $existFleet = $this->fleetRepository->find($parkVehicle->getFleetID())
+            ?? throw UnknownFleet::unknown();
 
         $vehicle = new Vehicle($parkVehicle->getPlateNumber());
         $location = new Location($parkVehicle->getLatitude(), $parkVehicle->getLongitude());

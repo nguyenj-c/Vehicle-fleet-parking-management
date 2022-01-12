@@ -10,7 +10,6 @@ class CreateFleetHandler
 {    
 
     public function __construct(private FleetRepository $fleetRepository){
-            $this->fleetRepository = $fleetRepository;
     }
 
     public function __invoke(CreateFleet $createFleet) {

@@ -4,8 +4,8 @@ namespace App\App;
 
 class Logger
 {
-    public function log($info)
+    public function log($info) : void
     {
-        echo "LOG: $info\n";
+        echo "LOG : $info\n";
     }
 }

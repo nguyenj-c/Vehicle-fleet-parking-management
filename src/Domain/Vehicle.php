@@ -26,7 +26,7 @@ final class Vehicle
         return new Vehicle($this->plateNumber(), $location);
     }
     
-    public function plateNumber()
+    public function plateNumber() : string
     {
         return $this->plateNumber;
     }
