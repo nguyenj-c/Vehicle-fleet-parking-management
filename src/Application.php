@@ -37,8 +37,9 @@ $logger = new Logger();
 
 $registerBus = new RegisterBus($map, $logger);
 
-$loggingMiddleware = new LoggingMiddleware($registerBus, $logger);
-$responseMiddleware = new ResponseTimeMiddleware($registerBus, $logger);
+$responseMiddleware = new ResponseTimeMiddleware($logger, $registerBus);
+$loggingMiddleware = new LoggingMiddleware($logger, $responseMiddleware);
+
 $middlewareBus = new MiddlewareBus([$loggingMiddleware,$responseMiddleware]);
 
 $application->add(new CreateFleetCommand($middlewareBus));

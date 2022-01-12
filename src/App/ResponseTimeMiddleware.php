@@ -4,7 +4,7 @@ namespace App\App;
 
 class ResponseTimeMiddleware implements CommandBusMiddleware
 {
-    public function __construct(private CommandBusMiddleware $commandBus, private Logger $logger)
+    public function __construct(private Logger $logger, private ?CommandBusMiddleware $next)
     {
     }
     
@@ -12,12 +12,14 @@ class ResponseTimeMiddleware implements CommandBusMiddleware
     {
         $startTime = microtime(true);
 
-        $reponse = $this->commandBus->handle($command);
-
+        if($this->next === null){
+            return;
+        }
+        $response = $this->next->handle($command);
         $endTime = microtime(true);
 
         $timeElapsed = $endTime - $startTime;
         $this->logger->log("$timeElapsed");
-        return $reponse;
+        return $response;
     }
 }

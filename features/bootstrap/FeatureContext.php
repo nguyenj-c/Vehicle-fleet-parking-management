@@ -61,8 +61,8 @@ class FeatureContext implements Context
         ]);
         
         $this->registerBus = new RegisterBus($this->map);
-        $this->loggingMiddelware = new LoggingMiddleware($this->registerBus,$this->logger);
-        $this->responseMiddleware = new ResponseTimeMiddleware($this->registerBus,$this->logger);
+        $this->responseMiddleware = new ResponseTimeMiddleware($this->logger, $this->registerBus);
+        $this->loggingMiddelware = new LoggingMiddleware($this->logger,$this->responseMiddleware);
         $this->middlewareBus = new MiddlewareBus([$this->loggingMiddelware, $this->responseMiddleware]);
     }
     
