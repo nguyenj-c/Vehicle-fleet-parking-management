@@ -8,9 +8,8 @@ use App\Domain\Exceptions\UnknownFleet;
 
 class ParkVehicleHandler
 {    
-    private FleetRepository $fleetRepository;
 
-    public function __construct(FleetRepository $fleetRepository){
+    public function __construct(private FleetRepository $fleetRepository){
             $this->fleetRepository = $fleetRepository;
     }
 

@@ -19,7 +19,7 @@ use App\App\ParkVehicleHandler;
 use App\App\CreateFleet;
 use App\App\CreateFleetHandler;
 use App\App\Logger;
-
+use App\App\LoggingMiddleware;
 use App\App\RegisterBus;
 use App\UI\CreateFleetCommand;
 use App\UI\RegisterVehicleCommand;
@@ -43,6 +43,7 @@ class FeatureContext implements Context
     private array $map;
     private RegisterBus $registerBus;
     private Logger $logger;
+    private LoggingMiddleware $loggingMiddelware;
 
 
     public function __construct(){
@@ -56,6 +57,7 @@ class FeatureContext implements Context
         ]);
         
         $this->registerBus = new RegisterBus($this->map,$this->logger);
+
     }
     
     /**
