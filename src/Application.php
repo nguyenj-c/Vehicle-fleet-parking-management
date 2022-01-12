@@ -9,11 +9,14 @@ use App\App\ParkVehicle;
 
 use App\App\RegisterBus;
 use App\App\Logger;
-use App\App\CreateFleetHandler;
+
+use App\App\MiddlewareBus;
 use App\App\LoggingMiddleware;
+use App\App\ResponseTimeMiddleware;
+
+use App\App\CreateFleetHandler;
 use App\App\RegisterVehicleHandler;
 use App\App\ParkVehicleHandler;
-
 use App\UI\CreateFleetCommand;
 use App\UI\RegisterVehicleCommand;
 use App\UI\ParkVehicleCommand;
@@ -33,9 +36,12 @@ $map = ([
 $logger = new Logger();
 
 $registerBus = new RegisterBus($map, $logger);
-$loggingMiddleware = new LoggingMiddleware($registerBus, $logger);
 
-$application->add(new CreateFleetCommand($loggingMiddleware));
-$application->add(new RegisterVehicleCommand($loggingMiddleware));
-$application->add(new ParkVehicleCommand($loggingMiddleware));
+$loggingMiddleware = new LoggingMiddleware($registerBus, $logger);
+$responseMiddleware = new ResponseTimeMiddleware($registerBus, $logger);
+$middlewareBus = new MiddlewareBus([$loggingMiddleware,$responseMiddleware]);
+
+$application->add(new CreateFleetCommand($middlewareBus));
+$application->add(new RegisterVehicleCommand($middlewareBus));
+$application->add(new ParkVehicleCommand($middlewareBus));
 $application->run();

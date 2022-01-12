@@ -20,7 +20,9 @@ use App\App\CreateFleet;
 use App\App\CreateFleetHandler;
 use App\App\Logger;
 use App\App\LoggingMiddleware;
+use App\App\MiddlewareBus;
 use App\App\RegisterBus;
+use App\App\ResponseTimeMiddleware;
 use App\UI\CreateFleetCommand;
 use App\UI\RegisterVehicleCommand;
 use App\UI\ParkVehicleCommand;
@@ -39,12 +41,14 @@ class FeatureContext implements Context
     private Location $location;
     private ?Exception $latestException = null;
     private ?ArrayFleetRepository $fleetRepository;
+
     private $application;
     private array $map;
     private RegisterBus $registerBus;
     private Logger $logger;
     private LoggingMiddleware $loggingMiddelware;
-
+    private ResponseTimeMiddleware $responseMiddleware;
+    private MiddlewareBus $middlewareBus;
 
     public function __construct(){
         $this->fleetRepository = new ArrayFleetRepository();
@@ -58,7 +62,8 @@ class FeatureContext implements Context
         
         $this->registerBus = new RegisterBus($this->map);
         $this->loggingMiddelware = new LoggingMiddleware($this->registerBus,$this->logger);
-
+        $this->responseMiddleware = new ResponseTimeMiddleware($this->registerBus,$this->logger);
+        $this->middlewareBus = new MiddlewareBus([$this->loggingMiddelware, $this->responseMiddleware]);
     }
     
     /**
@@ -182,7 +187,7 @@ class FeatureContext implements Context
      */
     public function aFleetCreateWithACommand()
     {
-        $this->application->add(new CreateFleetCommand($this->registerBus));
+        $this->application->add(new CreateFleetCommand($this->middlewareBus));
         $command = $this->application->find('./fleet_create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $command, 'username' => '000001'));
@@ -193,7 +198,7 @@ class FeatureContext implements Context
      */
     public function anAnotherFleetCreateWithACommand()
     {
-        $this->application->add(new CreateFleetCommand($this->loggingMiddelware));
+        $this->application->add(new CreateFleetCommand($this->middlewareBus));
         $command = $this->application->find('./fleet_create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $command, 'username' => '000002'));
@@ -220,7 +225,7 @@ class FeatureContext implements Context
      */
     public function iTryToRegisterWithCommand($arg1)
     {
-        $this->application->add(new RegisterVehicleCommand($this->loggingMiddelware));
+        $this->application->add(new RegisterVehicleCommand($this->middlewareBus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg1, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ'));
@@ -243,7 +248,7 @@ class FeatureContext implements Context
      */
     public function iTryToRegisterInAnotherFleetWithCommand($arg1)
     {
-        $this->application->add(new RegisterVehicleCommand($this->loggingMiddelware));
+        $this->application->add(new RegisterVehicleCommand($this->middlewareBus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg1, 'fleetId' => '000002', 'platNumber' => 'AN-010-ZZ'));
@@ -265,7 +270,7 @@ class FeatureContext implements Context
      */
     public function aVehicleInMyFleet()
     {
-        $this->application->add(new RegisterVehicleCommand($this->loggingMiddelware));
+        $this->application->add(new RegisterVehicleCommand($this->middlewareBus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $command, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ'));
@@ -276,7 +281,7 @@ class FeatureContext implements Context
      */
     public function iParkMyVehicleAtThisLocationWithCommand($arg1, $arg2, $arg3)
     {
-        $this->application->add(new ParkVehicleCommand($this->loggingMiddelware));
+        $this->application->add(new ParkVehicleCommand($this->middlewareBus));
         $command = $this->application->find('./fleet_localize-vehicle');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg3, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ', 

@@ -13,15 +13,7 @@ class LoggingMiddleware implements CommandBusMiddleware
         $commandClass = get_class($command);
 
         $this->logger->log("Starting $commandClass");
-        $startTime = microtime(true);
 
-        $reponse = $this->commandBus->handle($command);
-
-        $endTime = microtime(true);
-
-        $timeElapsed = $endTime - $startTime;
-        $this->logger->log("$timeElapsed");
         $this->logger->log("$commandClass finished without errors");
-        return $reponse;
     }
 }
