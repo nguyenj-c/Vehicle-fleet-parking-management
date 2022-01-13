@@ -22,9 +22,19 @@ use App\UI\RegisterVehicleCommand;
 use App\UI\ParkVehicleCommand;
 use App\Infra\ArrayFleetRepository;
 
+
 use Symfony\Component\Console\Application;
+use Symfony\Component\Messenger\Handler\HandlersLocator;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
 $application = new Application();
+$bus = new MessageBus([
+    new HandleMessageMiddleware(new HandlersLocator([
+        MyMessage::class => [$handler],
+    ])),
+]);
+    
 $fleetRepository= new ArrayFleetRepository();
 // ... register commands
 
@@ -40,7 +50,7 @@ $registerBus = new RegisterBus($map, $logger);
 $responseMiddleware = new ResponseTimeMiddleware($logger, $registerBus);
 $loggingMiddleware = new LoggingMiddleware($logger, $responseMiddleware);
 
-$middlewareBus = new MiddlewareBus([$loggingMiddleware,$responseMiddleware]);
+$middlewareBus = new MiddlewareBus([$loggingMiddleware,$responseMiddleware],$registerBus);
 
 $application->add(new CreateFleetCommand($middlewareBus));
 $application->add(new RegisterVehicleCommand($middlewareBus));
