@@ -31,7 +31,9 @@ use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 $application = new Application();
 $bus = new MessageBus([
     new HandleMessageMiddleware(new HandlersLocator([
-        MyMessage::class => [$handler],
+        CreateFleet::class => new CreateFleetHandler($fleetRepository), 
+        RegisterVehicle::class => new RegisterVehicleHandler($fleetRepository), 
+        ParkVehicle::class => new ParkVehicleHandler($fleetRepository),
     ])),
 ]);
     
@@ -52,7 +54,7 @@ $loggingMiddleware = new LoggingMiddleware($logger, $responseMiddleware);
 
 $middlewareBus = new MiddlewareBus([$loggingMiddleware,$responseMiddleware],$registerBus);
 
-$application->add(new CreateFleetCommand($middlewareBus));
-$application->add(new RegisterVehicleCommand($middlewareBus));
-$application->add(new ParkVehicleCommand($middlewareBus));
+$application->add(new CreateFleetCommand($bus));
+$application->add(new RegisterVehicleCommand($bus));
+$application->add(new ParkVehicleCommand($bus));
 $application->run();

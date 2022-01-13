@@ -13,11 +13,11 @@ use App\Domain\Exceptions\InvalidPark;
 
 use App\Infra\ArrayFleetRepository;
 use App\App\RegisterVehicle;
-use App\App\RegisterVehicleHandler;
+use App\UI\RegisterVehicleHandlerSymfony;
 use App\App\ParkVehicle;
-use App\App\ParkVehicleHandler;
+use App\UI\ParkVehicleHandlerSymfony;
 use App\App\CreateFleet;
-use App\App\CreateFleetHandler;
+use App\UI\CreateFleetHandlerSymfony;
 use App\App\Logger;
 use App\App\LoggingMiddleware;
 use App\App\MiddlewareBus;
@@ -29,6 +29,9 @@ use App\UI\ParkVehicleCommand;
 
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Application;
+use Symfony\Component\Messenger\Handler\HandlersLocator;
+use Symfony\Component\Messenger\MessageBus;
+use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
 /**
  * Defines application features from the specific context.
@@ -49,21 +52,35 @@ class FeatureContext implements Context
     private LoggingMiddleware $loggingMiddelware;
     private ResponseTimeMiddleware $responseMiddleware;
     private MiddlewareBus $middlewareBus;
+    private MessageBus $bus;
 
     public function __construct(){
         $this->fleetRepository = new ArrayFleetRepository();
         $this->application = new Application();
         $this->logger = new Logger();
-        $this->map = ([ 
-            CreateFleet::class => new CreateFleetHandler($this->fleetRepository), 
-            RegisterVehicle::class => new RegisterVehicleHandler($this->fleetRepository), 
-            ParkVehicle::class => new ParkVehicleHandler($this->fleetRepository),
-        ]);
         
+        $createHandler = new CreateFleetHandlerSymfony($this->fleetRepository);
+        $registerHandler = new RegisterVehicleHandlerSymfony($this->fleetRepository);
+        $parkHandler = new ParkVehicleHandlerSymfony($this->fleetRepository);
+
+        $this->map = ([ 
+            CreateFleet::class => $createHandler, 
+            RegisterVehicle::class => $registerHandler, 
+            ParkVehicle::class => $parkHandler,
+        ]);
+
+        $this->bus = new MessageBus([
+            new HandleMessageMiddleware(new HandlersLocator([
+                CreateFleet::class => [$createHandler], 
+                RegisterVehicle::class => [$registerHandler], 
+                ParkVehicle::class => [$parkHandler],
+            ])),
+        ]);
         $this->registerBus = new RegisterBus($this->map);
         $this->responseMiddleware = new ResponseTimeMiddleware($this->logger, $this->registerBus);
         $this->loggingMiddelware = new LoggingMiddleware($this->logger,$this->responseMiddleware);
         $this->middlewareBus = new MiddlewareBus([$this->loggingMiddelware, $this->responseMiddleware]);
+        
     }
     
     /**
@@ -71,7 +88,7 @@ class FeatureContext implements Context
      */
     public function myFleet()
     {
-        $commandHandler = new CreateFleetHandler($this->fleetRepository);
+        $commandHandler = new CreateFleetHandlerSymfony($this->fleetRepository);
         $command = new CreateFleet('AAAAA1');
         $this->fleet = $commandHandler($command);
     }
@@ -92,7 +109,7 @@ class FeatureContext implements Context
     public function ieRegisterThisVehicleIntoMyFleet()
     {
         try {
-            $commandHandler = new RegisterVehicleHandler($this->fleetRepository);
+            $commandHandler = new RegisterVehicleHandlerSymfony($this->fleetRepository);
             $command = new RegisterVehicle($this->fleet->ID(), $this->plateNumber);
             $commandHandler($command);
         } catch (DuplicateVehicle $e) {
@@ -124,7 +141,7 @@ class FeatureContext implements Context
      */
     public function theFleetOfAnotherUser()
     {
-        $commandHandler = new CreateFleetHandler($this->fleetRepository);
+        $commandHandler = new CreateFleetHandlerSymfony($this->fleetRepository);
         $command = new CreateFleet('AAAAA2');
         $this->otherFleet = $commandHandler($command);
     }
@@ -134,7 +151,7 @@ class FeatureContext implements Context
      */
     public function thisVehicleHasBeenRegisteredIntoTheOtherUsersFleet()
     {
-        $commandHandler = new RegisterVehicleHandler($this->fleetRepository);
+        $commandHandler = new RegisterVehicleHandlerSymfony($this->fleetRepository);
         $command = new RegisterVehicle($this->otherFleet->ID(), $this->plateNumber);
         $commandHandler($command);
     }
@@ -155,7 +172,7 @@ class FeatureContext implements Context
     public function iParkMyVehicleAtThisLocation()
     {
         try {
-            $commandHandler = new ParkVehicleHandler($this->fleetRepository);
+            $commandHandler = new ParkVehicleHandlerSymfony($this->fleetRepository);
             $command = new ParkVehicle($this->fleet->ID(), $this->plateNumber, $this->location->latitude(), $this->location->longitude());
             $commandHandler($command);
         } catch (InvalidPark $e) {
@@ -187,7 +204,7 @@ class FeatureContext implements Context
      */
     public function aFleetCreateWithACommand()
     {
-        $this->application->add(new CreateFleetCommand($this->middlewareBus));
+        $this->application->add(new CreateFleetCommand($this->bus));
         $command = $this->application->find('./fleet_create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $command, 'username' => '000001'));
@@ -198,7 +215,7 @@ class FeatureContext implements Context
      */
     public function anAnotherFleetCreateWithACommand()
     {
-        $this->application->add(new CreateFleetCommand($this->middlewareBus));
+        $this->application->add(new CreateFleetCommand($this->bus));
         $command = $this->application->find('./fleet_create');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $command, 'username' => '000002'));
@@ -225,7 +242,7 @@ class FeatureContext implements Context
      */
     public function iTryToRegisterWithCommand($arg1)
     {
-        $this->application->add(new RegisterVehicleCommand($this->middlewareBus));
+        $this->application->add(new RegisterVehicleCommand($this->bus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg1, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ'));
@@ -248,7 +265,7 @@ class FeatureContext implements Context
      */
     public function iTryToRegisterInAnotherFleetWithCommand($arg1)
     {
-        $this->application->add(new RegisterVehicleCommand($this->middlewareBus));
+        $this->application->add(new RegisterVehicleCommand($this->bus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg1, 'fleetId' => '000002', 'platNumber' => 'AN-010-ZZ'));
@@ -270,7 +287,7 @@ class FeatureContext implements Context
      */
     public function aVehicleInMyFleet()
     {
-        $this->application->add(new RegisterVehicleCommand($this->middlewareBus));
+        $this->application->add(new RegisterVehicleCommand($this->bus));
         $command = $this->application->find('./fleet_register');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $command, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ'));
@@ -281,7 +298,7 @@ class FeatureContext implements Context
      */
     public function iParkMyVehicleAtThisLocationWithCommand($arg1, $arg2, $arg3)
     {
-        $this->application->add(new ParkVehicleCommand($this->middlewareBus));
+        $this->application->add(new ParkVehicleCommand($this->bus));
         $command = $this->application->find('./fleet_localize-vehicle');
         $commandTester = new CommandTester($command);
         $commandTester->execute(array('command' => $arg3, 'fleetId' => '000001', 'platNumber' => 'AN-010-ZZ', 

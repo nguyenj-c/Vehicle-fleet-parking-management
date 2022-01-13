@@ -15,7 +15,7 @@ class ParkVehicleCommand extends Command
 
     protected static $defaultName = './fleet_localize-vehicle';
 
-    public function __construct(CommandBusMiddleware $commandBus){
+    public function __construct( $commandBus){
         $this->commandBus = $commandBus;
 
         parent::__construct();
@@ -44,7 +44,7 @@ class ParkVehicleCommand extends Command
         $output->writeln('The longitude of the location: '.$input->getArgument('longitude'));
 
         $command = new ParkVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'),$input->getArgument('latitude'),$input->getArgument('longitude'));
-        $this->commandBus->handle($command);
+        $this->commandBus->dispatch($command);
 
         return Command::SUCCESS;
     }

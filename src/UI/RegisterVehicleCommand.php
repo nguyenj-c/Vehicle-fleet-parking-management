@@ -15,7 +15,7 @@ class RegisterVehicleCommand extends Command
 
     protected static $defaultName = './fleet_register-vehicle';
 
-    public function __construct(CommandBusMiddleware $commandBus){
+    public function __construct( $commandBus){
         $this->commandBus = $commandBus;
 
         parent::__construct();
@@ -34,7 +34,7 @@ class RegisterVehicleCommand extends Command
         $output->writeln('Vehicle of the user: '.$input->getArgument('platNumber'));
         
         $command = new RegisterVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'));
-        $this->commandBus->handle($command);
+        $this->commandBus->dispatch($command);
 
         return Command::SUCCESS;
     }

@@ -15,7 +15,7 @@ class CreateFleetCommand extends Command
 
     protected static $defaultName = './fleet_create';
 
-    public function __construct(CommandBusMiddleware $commandBus){
+    public function __construct( $commandBus){
         $this->commandBus = $commandBus;
 
         parent::__construct();
@@ -31,7 +31,7 @@ class CreateFleetCommand extends Command
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: ' . $input->getArgument('username'));
         $command = new CreateFleet($input->getArgument('username'));
-        $this->commandBus->handle($command);
+        $this->commandBus->dispatch($command);
 
         return Command::SUCCESS;
     }
