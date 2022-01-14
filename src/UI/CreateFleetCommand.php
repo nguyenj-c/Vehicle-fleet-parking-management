@@ -33,7 +33,7 @@ class CreateFleetCommand extends Command
         // retrieve the argument value using getArgument()
         $output->writeln('Fleet of the user: ' . $input->getArgument('username'));
         $command = new CreateFleet($input->getArgument('username'));
-        $this->commandBus->handle($command,null);
+        $this->commandBus->dispatch($command);
 
         return Command::SUCCESS;
     }
