@@ -46,22 +46,21 @@ class FeatureContext implements Context
     private ?ArrayFleetRepository $fleetRepository;
 
     private $application;
-    private array $map;
+
     private RegisterBus $registerBus;
-    private Logger $logger;
     private MiddlewareBus $middlewareBus;
     private MessageBus $bus;
 
     public function __construct(){
         $this->fleetRepository = new ArrayFleetRepository();
         $this->application = new Application();
-        $this->logger = new Logger();
+        $logger = new Logger();
         
         $createHandler = new CreateFleetHandlerSymfony($this->fleetRepository);
         $registerHandler = new RegisterVehicleHandlerSymfony($this->fleetRepository);
         $parkHandler = new ParkVehicleHandlerSymfony($this->fleetRepository);
 
-        $this->map = ([ 
+        $map = ([ 
             CreateFleet::class => $createHandler, 
             RegisterVehicle::class => $registerHandler, 
             ParkVehicle::class => $parkHandler,
@@ -75,9 +74,9 @@ class FeatureContext implements Context
             ])),
         ]);
         
-        $this->registerBus = new RegisterBus($this->map);
-        $executionTimeMiddleware = new ExecutionTimeMiddleware($this->logger);
-        $loggingMiddelware = new LoggingMiddleware($this->logger);
+        $this->registerBus = new RegisterBus($map);
+        $executionTimeMiddleware = new ExecutionTimeMiddleware($logger);
+        $loggingMiddelware = new LoggingMiddleware($logger);
         $this->middlewareBus = new MiddlewareBus([$loggingMiddelware,$executionTimeMiddleware], $this->registerBus);
         
     }

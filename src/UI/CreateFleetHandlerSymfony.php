@@ -24,7 +24,7 @@ class CreateFleetHandlerSymfony implements MessageHandlerInterface
         $fleet = new Fleet($createFleet->getIdFleet());
         
         $this->fleetRepository->save($fleet);
-        usleep(500000);
+
         return $fleet;
     }
     
