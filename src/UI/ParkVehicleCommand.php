@@ -44,7 +44,7 @@ class ParkVehicleCommand extends Command
         $output->writeln('The longitude of the location: '.$input->getArgument('longitude'));
 
         $command = new ParkVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'),$input->getArgument('latitude'),$input->getArgument('longitude'));
-        $this->commandBus->dispatch($command);
+        $this->commandBus->handle($command,null);
 
         return Command::SUCCESS;
     }

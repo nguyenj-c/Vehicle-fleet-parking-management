@@ -9,12 +9,14 @@ class MiddlewareBus implements CommandBusMiddleware
     {
     }
     
-    public function handle($command)
+    public function handle($command,$next)
     {
-        foreach ($this->arrayMiddleware as $middleware) {
-            return $middleware->handle($command);
+        foreach (array_reverse($this->arrayMiddleware) as $middleware) {
+            $next = function ($command) use ($middleware, $next) {
+                return $middleware->handle($command,$next);
+            };
         }
-        return $middleware->handle($command);
+        return $next($command);
     }
     
     

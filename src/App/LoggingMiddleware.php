@@ -4,20 +4,19 @@ namespace App\App;
 
 class LoggingMiddleware implements CommandBusMiddleware
 {
-    public function __construct(private Logger $logger, private ?CommandBusMiddleware $next)
+    public function __construct(private Logger $logger)
     {
     }
     
-    public function handle($command)
+    public function handle($command,$next)
     {
         $commandClass = get_class($command);
 
 
         $this->logger->log("Starting $commandClass");
-        if($this->next === null){
-            return;
-        }
-        $response = $this->next->handle($command);
+
+        $response = $next($command,$next);
+        
         $this->logger->log("$commandClass finished without errors");
         return $response;
     }

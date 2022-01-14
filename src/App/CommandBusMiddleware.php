@@ -4,5 +4,5 @@ namespace App\App;
 
 interface CommandBusMiddleware
 {
-    public function handle($command);
+    public function handle($command,callable $next);
 }

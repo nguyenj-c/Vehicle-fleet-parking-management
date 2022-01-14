@@ -9,11 +9,13 @@ class RegisterBus implements CommandBusMiddleware
     {
     }
     
-    public function handle($command)
+    public function handle($command,$next)
     {
         $commandHandler = $this->arrayCommand[$command::class] 
-            ?? throw InvalidCommand::unknown();    
-        $commandHandler($command);
+            ?? throw InvalidCommand::unknown();  
+
+        $response = $commandHandler($command);
+        return $response;
     }
 
 }

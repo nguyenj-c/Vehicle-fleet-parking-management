@@ -34,7 +34,7 @@ class RegisterVehicleCommand extends Command
         $output->writeln('Vehicle of the user: '.$input->getArgument('platNumber'));
         
         $command = new RegisterVehicle($input->getArgument('fleetId'),$input->getArgument('platNumber'));
-        $this->commandBus->dispatch($command);
+        $this->commandBus->handle($command,null);
 
         return Command::SUCCESS;
     }
