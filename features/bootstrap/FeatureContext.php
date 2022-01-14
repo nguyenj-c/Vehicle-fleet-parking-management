@@ -26,15 +26,14 @@ use App\App\ExecutionTimeMiddleware;
 use App\UI\CreateFleetCommand;
 use App\UI\RegisterVehicleCommand;
 use App\UI\ParkVehicleCommand;
-
-
+use App\UI\TraceableMiddleware;
 use App\UI\ValidatorMiddleware;
 use Symfony\Component\Console\Tester\CommandTester;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Messenger\Handler\HandlersLocator;
 use Symfony\Component\Messenger\MessageBus;
 use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
-
+use Symfony\Component\Stopwatch\Stopwatch;
 
 /**
  * Defines application features from the specific context.
@@ -68,14 +67,16 @@ class FeatureContext implements Context
             RegisterVehicle::class => $registerHandler, 
             ParkVehicle::class => $parkHandler,
         ]);
+        $stopwatch = new Stopwatch(true);
 
         $this->bus = new MessageBus([
+            new ValidatorMiddleware($logger),
+            new TraceableMiddleware($logger,$stopwatch),
             new HandleMessageMiddleware(new HandlersLocator([
                 CreateFleet::class => [$createHandler], 
                 RegisterVehicle::class => [$registerHandler], 
                 ParkVehicle::class => [$parkHandler],
             ])),
-            new ValidatorMiddleware($logger),
         ]);
         
         $this->registerBus = new RegisterBus($map);

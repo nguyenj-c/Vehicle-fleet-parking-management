@@ -10,6 +10,7 @@
     },
     "require": {
         "symfony/console": "^6.0",
-        "symfony/messenger": "^6.0"
+        "symfony/messenger": "^6.0",
+        "symfony/stopwatch": "^6.0"
     }
 }

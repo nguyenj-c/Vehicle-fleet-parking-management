@@ -2,14 +2,13 @@
 
 namespace App\UI;
 use App\App\Logger;
-use Symfony\Component\Messenger\Envelope;
-use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
-use Symfony\Component\Messenger\Middleware\StackInterface;
-use Symfony\Component\Messenger\Stamp\ReceivedStamp;
-use App\App\CommandBusMiddleware;
 use App\App\CreateFleet;
 use App\App\ParkVehicle;
 use App\App\RegisterVehicle;
+
+use Symfony\Component\Messenger\Envelope;
+use Symfony\Component\Messenger\Middleware\MiddlewareInterface;
+use Symfony\Component\Messenger\Middleware\StackInterface;
 
 class ValidatorMiddleware implements MiddlewareInterface
 {
