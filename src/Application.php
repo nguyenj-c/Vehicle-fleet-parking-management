@@ -12,7 +12,7 @@ use App\App\Logger;
 
 use App\App\MiddlewareBus;
 use App\App\LoggingMiddleware;
-use App\App\ResponseTimeMiddleware;
+use App\App\ExecutionTimeMiddleware;
 
 use App\App\CreateFleetHandler;
 use App\App\RegisterVehicleHandler;
@@ -29,27 +29,33 @@ use Symfony\Component\Messenger\MessageBus;
 use Symfony\Component\Messenger\Middleware\HandleMessageMiddleware;
 
 $application = new Application();
+$fleetRepository= new ArrayFleetRepository();
+
+$createHandler = new CreateFleetHandler($fleetRepository);
+$registerHandler = new RegisterVehicleHandler($fleetRepository);
+$parkHandler = new ParkVehicleHandler($fleetRepository);
+
 $bus = new MessageBus([
     new HandleMessageMiddleware(new HandlersLocator([
-        CreateFleet::class => new CreateFleetHandler($fleetRepository), 
-        RegisterVehicle::class => new RegisterVehicleHandler($fleetRepository), 
-        ParkVehicle::class => new ParkVehicleHandler($fleetRepository),
+        CreateFleet::class => [$createHandler], 
+        RegisterVehicle::class => [$registerHandler], 
+        ParkVehicle::class => [$parkHandler],
     ])),
 ]);
     
-$fleetRepository= new ArrayFleetRepository();
+
 // ... register commands
 
 $map = ([ 
-    CreateFleet::class => new CreateFleetHandler($fleetRepository), 
-    RegisterVehicle::class => new RegisterVehicleHandler($fleetRepository), 
-    ParkVehicle::class => new ParkVehicleHandler($fleetRepository),
+    CreateFleet::class => $createHandler, 
+    RegisterVehicle::class => $registerHandler, 
+    ParkVehicle::class => $parkHandler,
 ]);
 $logger = new Logger();
 
 $registerBus = new RegisterBus($map, $logger);
 
-$responseMiddleware = new ResponseTimeMiddleware($logger, $registerBus);
+$responseMiddleware = new ExecutionTimeMiddleware($logger, $registerBus);
 $loggingMiddleware = new LoggingMiddleware($logger, $responseMiddleware);
 
 $middlewareBus = new MiddlewareBus([$loggingMiddleware,$responseMiddleware],$registerBus);

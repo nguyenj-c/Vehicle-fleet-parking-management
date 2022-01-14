@@ -9,13 +9,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 
 use App\App\CreateFleet;
+use App\App\MiddlewareBus;
+use Symfony\Component\Messenger\MessageBus;
 
 class CreateFleetCommand extends Command
 {
 
     protected static $defaultName = './fleet_create';
 
-    public function __construct( $commandBus){
+    public function __construct(CommandBusMiddleware|MessageBus $commandBus){
         $this->commandBus = $commandBus;
 
         parent::__construct();

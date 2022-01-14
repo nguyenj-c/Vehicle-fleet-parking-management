@@ -2,7 +2,9 @@
 
 namespace App\App;
 
-class Logger
+use Symfony\Component\Messenger\Stamp\StampInterface;
+
+class Logger implements StampInterface
 {
     public function log($info) : void
     {

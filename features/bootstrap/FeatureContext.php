@@ -22,7 +22,7 @@ use App\App\Logger;
 use App\App\LoggingMiddleware;
 use App\App\MiddlewareBus;
 use App\App\RegisterBus;
-use App\App\ResponseTimeMiddleware;
+use App\App\ExecutionTimeMiddleware;
 use App\UI\CreateFleetCommand;
 use App\UI\RegisterVehicleCommand;
 use App\UI\ParkVehicleCommand;
@@ -49,8 +49,6 @@ class FeatureContext implements Context
     private array $map;
     private RegisterBus $registerBus;
     private Logger $logger;
-    private LoggingMiddleware $loggingMiddelware;
-    private ResponseTimeMiddleware $responseMiddleware;
     private MiddlewareBus $middlewareBus;
     private MessageBus $bus;
 
@@ -76,10 +74,11 @@ class FeatureContext implements Context
                 ParkVehicle::class => [$parkHandler],
             ])),
         ]);
+        
         $this->registerBus = new RegisterBus($this->map);
-        $this->responseMiddleware = new ResponseTimeMiddleware($this->logger);
-        $this->loggingMiddelware = new LoggingMiddleware($this->logger);
-        $this->middlewareBus = new MiddlewareBus([$this->loggingMiddelware, $this->responseMiddleware,$this->registerBus]);
+        $executionTimeMiddleware = new ExecutionTimeMiddleware($this->logger);
+        $loggingMiddelware = new LoggingMiddleware($this->logger);
+        $this->middlewareBus = new MiddlewareBus([$loggingMiddelware,$executionTimeMiddleware], $this->registerBus);
         
     }
     
